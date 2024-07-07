@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="home.css" />
+        <title>Login</title>
+        {% load static %}
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{% static 'css/home.css' %}" />
+    </head>
+    <body class="flex flex-col bg-[#F2E8CF] h-dvh">
+        <header
+            class="flex flex-row items-end justify-start px-[100px] py-5 gap-10 mb-20">
+            <div class="flex flex-row items-end gap-2">
+                <div class="icon w-32 h-32"></div>
+                <div class="flex flex-row text-6xl font-bold gap-2">
+                    <p class="text-[#BC4749]">Zé</p>
+                    <p class="text-[#fbb02d]">das</p>
+                    <p class="text-[#386641]">Frutas</p>
+                </div>
+            </div>
+            <div
+                class="flex h-[46px] w-full rounded-full border border-slate-100 bg-slate-100 items-center px-4 focus-within:border-[#A7C957] focus-within:text-[#A7C957] relative overflow-hidden hover:shadow-md">
+                <input
+                    placeholder="Pesquisar"
+                    type="text"
+                    class="h-[38px] w-full border-transparent rounded-full bg-slate-100 focus:outline-none text-lg text-black absolute" />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 relative z-10 ml-auto">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+            </div>
+            <div class="ml-auto flex flex-row gap-8">
+                <div class="">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-9 hover:text-[#A7C957] cursor-pointer">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                    </svg>
+                </div>
+                <div class="">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-10 hover:text-[#A7C957] cursor-pointer">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                </div>
+            </div>
+        </header>
+
+        <div
+            class="flex flex-col items-center justify-center gap-10 p-20 bg-white">
+            {% if is_admin %}
+
+            <button
+                type="submit"
+                class="bg-[#6A994E] hover:bg-[#386641] rounded-lg h-10 w-[300px]">
+                <p class="font-bold text-white">Cadastrar frutas</p>
+            </button>
+
+            {% elif is_vendedor %}
+
+            <button type="submit" class="bg-cyan-500 rounded-lg h-10 w-[300px]">
+                Cadastrar frutas
+            </button>
+
+            {% else %}
+
+            <p>Você não tem permissões especiais.</p>
+
+            {% endif %}
+        </div>
+    </body>
+</html>
