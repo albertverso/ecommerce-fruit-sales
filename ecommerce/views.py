@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from ecommerce.models import User
+from ecommerce.models import User, Fruit, Sale, SaleItem
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -48,15 +48,33 @@ def sigh_in(request):
 def home_page(request):
     if request.method == "GET":
 
-        user_groups = request.user.groups.values_list('name', flat=True)
-        is_admin = 'admin' in user_groups
-        is_vendedor = 'vendedor' in user_groups
+        user = request.user
 
-        context = {
-        'is_admin': is_admin,
-        'is_vendedor': is_vendedor,
-        }
-        return render(request, 'home.html', context=context) 
+        fruits_list = Fruit.objects.all()
+        user_list = User.objects.filter(role__in=['cliente', 'vendedor'])
+
+        print(user.role)
+        if user.role == 'Cliente':
+            context = {
+                'is_cliente': True,
+                'fruits': fruits_list
+                }
+            return render(request, 'home.html', context)
+        elif user.role == 'Vendedor':
+            context = {
+                'is_cliente': True,
+                'fruits': fruits_list
+                }
+            return render(request, 'home.html', context)
+        elif user.role == 'Admin':
+            context = {
+            'is_admin': True,
+            'fruits': fruits_list,
+            'list_user': user_list,
+            }
+            return render(request, 'home.html', context ) 
+        else:
+            return HttpResponse("Access Denied")
 
 def register_fruits(request):
     if request.method == "GET":

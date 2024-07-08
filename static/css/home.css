@@ -1,11 +1,3 @@
-.imageheader {
-    background-image: url(/static/images/fruitsHeader.jpg);
-    width: 100%;
-    background-size: cover; /* Preenche a largura e altura da div */
-    background-position: center; /* Centraliza a imagem */
-    background-repeat: no-repeat; /* Não repete a imagem */
-}
-
 .icon {
     background-image: url(/static/images/fruit_icon.png);
     width: 50px;
