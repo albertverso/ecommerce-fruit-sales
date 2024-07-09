@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+        <link rel="stylesheet" href="home.css" />
+        <title>Home</title>
+        <link
+            rel="shortcut icon"
+            type="imagex/png"
+            href="/static/images/fruit_icon.png" />
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
+    </head>
+    <body class="flex flex-col bg-[#F2E8CF]" id="main-content">
+        <header
+            class="flex flex-row items-end justify-start px-[100px] py-5 gap-10 mb-20">
+            <div class="flex flex-row items-end gap-2">
+                <div class="icon w-32 h-32"></div>
+                <div class="flex flex-row text-6xl font-bold gap-2">
+                    <p class="text-[#BC4749]">Zé</p>
+                    <p class="text-[#fbb02d]">das</p>
+                    <p class="text-[#386641]">Frutas</p>
+                </div>
+            </div>
+            <div
+                class="flex h-[46px] w-full rounded-full border border-white bg-white items-center px-4 focus-within:border-[#A7C957] focus-within:text-[#A7C957] relative overflow-hidden hover:shadow-md">
+                <input
+                    placeholder="Pesquisar"
+                    type="text"
+                    class="h-[38px] w-full border-transparent rounded-full bg-white focus:outline-none text-lg text-black absolute" />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6 relative z-10 ml-auto">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+            </div>
+            <div class="ml-auto flex flex-row gap-8">
+                <button class="flex rounded focus:outline-none">
+                    <i
+                        class="bi bi-cart4 text-4xl text-black hover:text-[#A7C957]"></i>
+                </button>
+                <!-- Menu Button -->
+                <button id="menu-btn" class="flex rounded focus:outline-none">
+                    <i
+                        class="bi bi-list text-black text-5xl hover:text-[#A7C957]"></i>
+                </button>
+
+                <div class="flex">
+                    <!-- Sidebar -->
+                    <div
+                        id="sidebar"
+                        class="fixed inset-y-0 right-0 transform translate-x-full transition-transform duration-300 w-64 h-screen bg-[#A7C957] text-white flex flex-col z-40">
+                        <div class="flex flex-row items-center justify-between">
+                            <div class="p-4 text-2xl font-semibold">Menu</div>
+                            <!-- Close Button -->
+                            <button
+                                id="close-btn"
+                                class="flex z-50 rounded focus:outline-none pr-5">
+                                <i class="bi bi-x-lg text-white text-3xl"></i>
+                            </button>
+                        </div>
+                        <nav class="flex flex-col flex-1 p-2 font-semibold">
+                            <a href="#" class="p-2 rounded hover:bg-[#386641]"
+                                >Home</a
+                            >
+                            <a
+                                id="perfil-user"
+                                href="#"
+                                class="p-2 rounded hover:bg-[#386641]"
+                                >Perfil</a
+                            >
+                            <a
+                                href="#"
+                                class="p-2 rounded hover:bg-[#386641] open-modal"
+                                >Contact</a
+                            >
+                        </nav>
+
+                        <form
+                            method="POST"
+                            action="/ecommerce/home/"
+                            class="flex justify-center">
+                            {% csrf_token %}
+                            <button
+                                name="logout"
+                                type="submit"
+                                class="flex items-center justify-center mt-auto gap-2 pb-10 hover:text-[#386641]">
+                                <p class="text-xl font-semibold">Sair</p>
+                                <i class="bi bi-box-arrow-right text-xl"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="modal-container"></div>
+                </div>
+            </div>
+        </header>
+
+        <div
+            class="flex flex-col items-center justify-center h-full bg-slate-100 px-[100px] bg-repeat bg-[length:100px_100px] pb-10 main-content"
+            style="background-image: url('/static/images/cover-trans.png')">
+            <section class="flex flex-col items-center justify-center">
+                <div
+                    class="flex text-4xl font-bold text-[#386641] relative items-center justify-center">
+                    <img
+                        src="/static/images/signpost1.png"
+                        alt=""
+                        class="w-[280px] h-[220px]" />
+                    <p class="absolute text-center mt-6">
+                        Frutas <br />
+                        Disponiveis
+                    </p>
+                </div>
+                <div class="grid grid-cols-4 gap-10">
+                    {% for fruit in fruits %}
+                    <div
+                        class="flex flex-col w-full rounded-xl p-5 bg-white items-center justify-center hover:shadow-2xl">
+                        <div class="h-[200px] w-[200px] relative rounded-lg">
+                            {% if fruit.fresh %}
+                            <div
+                                class="flex rounded-full bg-[#A7C957] w-24 h-8 absolute items-center justify-center font-bold">
+                                <p>Fresca</p>
+                            </div>
+                            {% endif %}
+                            <img
+                                src="{{fruit.image.url}}"
+                                alt="{{fruit.name}}"
+                                class="rounded-2xl w-[200px] h-[200px]" />
+                        </div>
+                        <div class="flex flex-col text-xl gap-1 self-start">
+                            <p class="font-bold">{{ fruit.fruit_name }}</p>
+                            <p>Classificação: {{ fruit.rating }}</p>
+                            <p>Quantidade: {{ fruit.quantity }}</p>
+                            <p class="font-semibold">
+                                {{ fruit.itemssalevalue_sale }} $
+                            </p>
+                        </div>
+                        <div class="flex items-center mt-5">
+                            {% if is_vendedor == 'vendedor' %}
+                            <button
+                                class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
+                                Vender
+                            </button>
+                            {% elif is_admin %}
+                            <button
+                                class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
+                                Editar
+                            </button>
+                            {% else %}
+                            <button
+                                class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
+                                Comprar
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            {% if is_admin %}
+            <div class="flex flex-col items-center justify-center mt-10 w-full">
+                <div
+                    class="flex text-4xl font-bold text-[#386641] relative items-center justify-center">
+                    <img
+                        src="/static/images/signpost1.png"
+                        alt=""
+                        class="w-[200px] h-[140px]" />
+                    <p class="absolute text-center mt-5">Usuários</p>
+                </div>
+
+                <table class="min-w-full bg-white border border-[#6A994E]">
+                    <thead class="bg-[#6A994E] text-white">
+                        <tr>
+                            <th class="w-1/3 text-left py-3 px-4">Username</th>
+                            <th class="w-1/3 text-left py-3 px-4">Email</th>
+                            <th class="w-1/3 text-left py-3 px-4">Profile</th>
+                            <th class="w-1/3 text-left py-3 px-4">Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in list_user %}
+                        <tr class="text-lg font-semibold">
+                            <td class="w-1/3 text-left py-3 px-4">
+                                {{ user.username }}
+                            </td>
+                            <td class="w-1/3 text-left py-3 px-4">
+                                {{ user.email }}
+                            </td>
+                            <td class="w-1/3 text-left py-3 px-4">
+                                {{ user.role }}
+                            </td>
+                            <td class="w-1/3 text-left py-3 px-4">
+                                <button>
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% elif is_vendedor %}
+
+            <div></div>
+
+            {% endif %}
+        </div>
+
+        <div
+            id="modal-user"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-5 gap-5">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex flex-row items-center justify-center">
+                    <h2 class="text-2xl font-bold">Perfil</h2>
+                    <button id="close-modal" class="px-4 py-2 rounded ml-auto">
+                        <i
+                            class="bi bi-x-lg text-black text-xl hover:text-[#BC4749]"></i>
+                    </button>
+                </div>
+
+                <form
+                    method="POST"
+                    action="/ecommerce/home/"
+                    class="flex flex-col items-center gap-10">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col">
+                            <label for="">Nome</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="">Sobrenome</label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="flex flex-col col-span-2">
+                            <label for="">Email</label>
+                            <input
+                                class="p-2 border rounded-lg"
+                                disabled
+                                type="text"
+                                value="{{user.email}}" />
+                        </div>
+                        <!-- <div class="flex flex-col">
+                            <label for="">Senha</label>
+                            <input
+                                name="password"
+                                type="text"
+                                class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none" />
+                        </div> -->
+                        <div class="flex flex-col">
+                            <label for="">Profile</label>
+                            <select
+                                disabled
+                                title="Profile"
+                                id="profile"
+                                name="role"
+                                class="p-2 border rounded-lg">
+                                <option disabled selected value>
+                                    {{user.role}}
+                                </option>
+                                <option value="Cliente">Cliente</option>
+                                <option value="Vendedor">Vendedor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {% if messages %} {% for message in messages %}
+
+                    <p id="message_sucess" class="text-[#A7C957]">
+                        {{ message }}
+                    </p>
+
+                    {% endfor %} {% endif %}
+
+                    <button
+                        name="edit_user"
+                        type="submit"
+                        class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
+                        Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <script src="/static/js/home.js"></script>
+    </body>
+</html>

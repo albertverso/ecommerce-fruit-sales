@@ -9,7 +9,7 @@ class User(AbstractUser):
     class UserRole(models.TextChoices):
         ADMIN = 'Admin', 'Admin'
         VENDEDOR = 'Vendedor', 'Vendedor'
-        CLIENTE = 'Usuario', 'Cliente'
+        CLIENTE = 'Cliente', 'Cliente'
     role = models.CharField(
         max_length=10,
         choices=UserRole.choices,
@@ -44,15 +44,22 @@ class Sale(models.Model):
     total_value = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Sale {self.id} by {self.user.user_name}"
+        return f"Sale {self.id} by {self.user.username}"
 
 class SaleItem(models.Model):
+    DISCOUNT_CHOICES = [
+        ('5%', '5%'),
+        ('10%', '10%'),
+        ('15%', '15%'),
+        ('20%', '20%'),
+        ('25%', '25%'),
+    ]
     id = models.AutoField(primary_key=True)
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
     fruit = models.ForeignKey(Fruit, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     unitary_value = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.IntegerField()
+    discount = models.CharField(max_length=10, choices=DISCOUNT_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return f"{self.quantity} x {self.fruit.fruit_name} (Sale {self.sale.id})"

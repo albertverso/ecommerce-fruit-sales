@@ -5,3 +5,4 @@ from .models import User, Fruit, Sale, SaleItem
 admin.site.register(User)
 admin.site.register(Fruit)
 admin.site.register(Sale)
+admin.site.register(SaleItem)
