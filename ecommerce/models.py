@@ -59,7 +59,7 @@ class SaleItem(models.Model):
     fruit = models.ForeignKey(Fruit, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     unitary_value = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.CharField(max_length=10, choices=DISCOUNT_CHOICES)
+    discount = models.CharField(max_length=10, choices=DISCOUNT_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return f"{self.quantity} x {self.fruit.fruit_name} (Sale {self.sale.id})"

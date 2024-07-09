@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
 from ecommerce.models import User, Fruit, Sale, SaleItem
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-
+from ecommerce.forms import UserProfileForm
+from django.contrib import messages
+from django.contrib.messages import get_messages
+import time
 # Create your views here.
 
 def sigh_up(request):
@@ -46,14 +49,16 @@ def sigh_in(request):
 
 @login_required(login_url="/ecommerce/sigh_in")
 def home_page(request):
+               
     if request.method == "GET":
+        form = UserProfileForm(instance=request.user)
 
         user = request.user
 
         fruits_list = Fruit.objects.all()
         user_list = User.objects.filter(role__in=['cliente', 'vendedor'])
 
-        print(user.role)
+        print(user.username)
         if user.role == 'Cliente':
             context = {
                 'is_cliente': True,
@@ -71,10 +76,27 @@ def home_page(request):
             'is_admin': True,
             'fruits': fruits_list,
             'list_user': user_list,
+            'user': user,
+            'form': form,
+            'messages': get_messages(request)
             }
             return render(request, 'home.html', context ) 
         else:
             return HttpResponse("Access Denied")
+    elif request.method == "POST":
+            if 'logout' in request.POST:
+                logout(request)
+                return redirect('home')   
+
+            if 'edit_user' in request.POST:
+                form = UserProfileForm(request.POST, instance=request.user)
+                if form.is_valid():
+                    form.save()
+
+                    messages.success(request, 'Profile updated successfully')
+                    return redirect('home')
+        
+          
 
 def register_fruits(request):
     if request.method == "GET":
