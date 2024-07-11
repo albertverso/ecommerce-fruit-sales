@@ -29,25 +29,49 @@ def sigh_up(request):
 
         return HttpResponse(f'{user_created}')
 
-def sigh_in(request):
+def login_user(request):
     
     if request.method == "GET":
-        return render(request, 'sigh_in.html')
+        context = {
+                'messages': get_messages(request)
+                }
+        return render(request, 'login_user.html', context)
     elif request.method == "POST":
-        username = request.POST.get('user_name')
-        password = request.POST.get('password')
 
-        user = User.objects.get(username=username)
+        if 'sigh_in' in request.POST
+            username = request.POST.get('user_name')
+            password = request.POST.get('password')
 
-        user = authenticate(username=username, password=password)
-        if user: 
-         
-            login(request, user)
+            user = User.objects.get(username=username)
+
+            user = authenticate(username=username, password=password)
+            if user: 
+            
+                login(request, user)
+                return redirect('home')
+            else:
+                return messages.error(request, 'username ou senha invalida')
+
+        elif 'sigh_up' in request.POST
+            username = request.POST.get('user_name')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+
+            user = User.objects.filter(username=username).first()
+
+            if user: 
+                return messages.error(request, 'Ja existe um usuario com esse nome')
+        
+            user_created = User.objects.create(username=username, email=email)
+            user_created.set_password(password)  # Criptografa a senha
+            user_created.save()
+
+            messages.success(request, 'Profile created successfully')
+
+            time.sleep(2.5)
             return redirect('home')
-        else:
-            return HttpResponse('username ou senha invalida')
 
-@login_required(login_url="/ecommerce/sigh_in")
+@login_required(login_url="/ecommerce/login_user")
 def home_page(request):
 
     if request.method == "GET":
@@ -170,15 +194,3 @@ def home_page(request):
 
                     messages.success(request, 'Sale successfully')
                     return redirect('home')
-
-
-        
-          
-
-def register_fruits(request):
-    if request.method == "GET":
-        return render(request, 'register_fruits.html')
-    elif request.method == "POST":
-        name = request.POST.get('name_fruit')
-        price = request.POST.get('price_fruit')
-        return HttpResponse(f'{name} - {price}')
