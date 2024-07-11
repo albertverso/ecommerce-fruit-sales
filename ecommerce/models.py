@@ -29,7 +29,7 @@ class Fruit(models.Model):
     id = models.AutoField(primary_key=True)
     fruit_name = models.CharField(max_length=100)
     rating = models.CharField(max_length=10, choices=RATING_CHOICES)
-    fresh = models.BooleanField()
+    fresh = models.BooleanField(default=False)
     quantity = models.IntegerField()
     itemssalevalue_sale = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='fruit_images/', null=True, blank=True)

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
@@ -13,7 +14,7 @@
             rel="shortcut icon"
             type="imagex/png"
             href="/static/images/fruit_icon.png" />
-        {% load static %}
+
         <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
     </head>
     <body class="flex flex-col bg-[#F2E8CF]" id="main-content">
@@ -27,25 +28,33 @@
                     <p class="text-[#386641]">Frutas</p>
                 </div>
             </div>
-            <div
+            <form
+                action="/ecommerce/home/"        
+                method="GET"
+                action=""
                 class="flex h-[46px] w-full rounded-full border border-white bg-white items-center px-4 focus-within:border-[#A7C957] focus-within:text-[#A7C957] relative overflow-hidden hover:shadow-md">
+                {% csrf_token %}
                 <input
+                    autocomplete="off"
+                    id="search-input"
+                    name="search"
+                    value="{{ request.GET.query|default:'' }}"
                     placeholder="Pesquisar"
                     type="text"
                     class="h-[38px] w-full border-transparent rounded-full bg-white focus:outline-none text-lg text-black absolute" />
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-6 relative z-10 ml-auto">
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-            </div>
+                <button type="submit" class="relative z-10 ml-auto " id="search-btn">
+                    <i class="bi bi-search "></i>
+                </button>
+            </form>
+
+            <script>
+                window.addEventListener('load', function() {
+                    if (performance.navigation.type === 1) { // Check if page is reloaded
+                        window.location.href = window.location.pathname; // Redirect to base URL
+                    }
+                });
+            </script>
+        
             <div class="ml-auto flex flex-row gap-8">
                 <button class="flex rounded focus:outline-none">
                     <i
@@ -72,20 +81,41 @@
                             </button>
                         </div>
                         <nav class="flex flex-col flex-1 p-2 font-semibold">
-                            <a href="#" class="p-2 rounded hover:bg-[#386641]"
-                                >Home</a
-                            >
                             <a
-                                id="perfil-user"
                                 href="#"
-                                class="p-2 rounded hover:bg-[#386641]"
-                                >Perfil</a
+                                class="p-2 rounded hover:bg-[#386641] open-modal"
+                                data-target="home-content"
+                                >Home</a
                             >
                             <a
                                 href="#"
                                 class="p-2 rounded hover:bg-[#386641] open-modal"
-                                >Contact</a
+                                data-target="perfil-content"
+                                >Perfil</a
                             >
+                            {% if is_admin %}
+                                <a
+                                    href="#"
+                                    data-target="added-user-content"
+                                    class="p-2 rounded hover:bg-[#386641] open-modal"
+                                    >Adicionar venda de fruta</a
+                                >
+                                <a
+                                    href="#"
+                                    data-target="added-fruits-content"
+                                    class="p-2 rounded hover:bg-[#386641] open-modal"
+                                    >Adicionar Venda</a
+                                >
+                            {% elif is_vendedor %}
+                            <a
+                                href="#"
+                                data-target="added-sale-content"
+                                class="p-2 rounded hover:bg-[#386641] open-modal"
+                                >Adicionar vendas</a
+                            >
+                            {% endif %}
+
+
                         </nav>
 
                         <form
@@ -148,7 +178,7 @@
                             </p>
                         </div>
                         <div class="flex items-center mt-5">
-                            {% if is_vendedor == 'vendedor' %}
+                            {% if is_vendedor %}
                             <button
                                 class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
                                 Vender
@@ -166,6 +196,8 @@
                             {% endif %}
                         </div>
                     </div>
+                    {% empty %}
+                        <p class="text-2xl font-bold text-[#6A994E] text-center">Nenhuma fruta encontrada.</p>
                     {% endfor %}
                 </div>
             </section>
@@ -214,87 +246,395 @@
             </div>
             {% elif is_vendedor %}
 
-            <div></div>
+            <div class="flex flex-col items-center justify-center mt-10 w-full">
+                <div
+                    class="flex text-4xl font-bold text-[#386641] relative items-center justify-center">
+                    <img
+                        src="/static/images/signpost1.png"
+                        alt=""
+                        class="w-[200px] h-[140px]" />
+                    <p class="absolute text-center mt-5">Usuários</p>
+                </div>
+
+                <table class="min-w-full bg-white border border-[#6A994E]">
+                    <thead class="bg-[#6A994E] text-white">
+                        <tr>
+                            <th class="w-1/5 text-left py-3 px-4">Horario da venda</th>
+                            <th class="w-1/5 text-left py-3 px-4">Valor total da venda</th>
+                            <th class="w-1/2 text-left py-3 px-4">Items da venda</th>
+                            <th class="w-1/6 text-left py-3 px-4">Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for items in items_list %}
+                        <tr class="text-lg font-semibold break-normal">
+                            <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E]">
+                                {{ items.sale.date_time }}
+                            </td>
+                            <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E]">
+                                {{ items.sale.total_value }}
+                            </td>
+                            <td class="w-full text-left py-3 px-4 flex flex-row justify-between gap-5 border-r-[1px] border-r-[#6A994E]"> 
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Fruta  </p> <p>{{ items.fruit.fruit_name }}</p>
+                                </div>
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Quant.  </p> <p> {{ items.quantity }} </p>
+                                </div>
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Valor Uni. </p> <p> {{ items.unitary_value }} </p> 
+                                </div>
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Desconto </p>  <p> {{ items.discount }} </p> 
+                                </div>
+                            </td>
+                            <td class="w-1/6 text-left py-3 px-4 p-2">
+                                <div class="flex items-center justify-center gap-8">
+                                    <button>
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button>
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
             {% endif %}
         </div>
 
         <div
-            id="modal-user"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-5 gap-5">
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <div class="flex flex-row items-center justify-center">
-                    <h2 class="text-2xl font-bold">Perfil</h2>
-                    <button id="close-modal" class="px-4 py-2 rounded ml-auto">
-                        <i
-                            class="bi bi-x-lg text-black text-xl hover:text-[#BC4749]"></i>
-                    </button>
-                </div>
-
-                <form
-                    method="POST"
-                    action="/ecommerce/home/"
-                    class="flex flex-col items-center gap-10">
-                    {% csrf_token %}
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex flex-col">
-                            <label for="">Nome</label>
-                            {{ form.first_name }}
-                        </div>
-                        <div class="flex flex-col">
-                            <label for="">Sobrenome</label>
-                            {{ form.last_name }}
-                        </div>
-                        <div class="flex flex-col col-span-2">
-                            <label for="">Email</label>
-                            <input
-                                class="p-2 border rounded-lg"
-                                disabled
-                                type="text"
-                                value="{{user.email}}" />
-                        </div>
-                        <!-- <div class="flex flex-col">
-                            <label for="">Senha</label>
-                            <input
-                                name="password"
-                                type="text"
-                                class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none" />
-                        </div> -->
-                        <div class="flex flex-col">
-                            <label for="">Profile</label>
-                            <select
-                                disabled
-                                title="Profile"
-                                id="profile"
-                                name="role"
-                                class="p-2 border rounded-lg">
-                                <option disabled selected value>
-                                    {{user.role}}
-                                </option>
-                                <option value="Cliente">Cliente</option>
-                                <option value="Vendedor">Vendedor</option>
-                            </select>
-                        </div>
+            id="modal"
+            class="fixed inset-0 bg-opacity-50 bg-black flex items-center justify-center hidden z-50 p-5 gap-5">
+            <div id="modal-contents" class="flex justify-between">
+                <div
+                    class="bg-white p-6 rounded-lg shadow-lg modal-content hidden"
+                    id="perfil-content">
+                    <div class="flex flex-row items-center justify-center mb-10">
+                        <h2 class="text-2xl font-bold">Perfil</h2>
                     </div>
 
-                    {% if messages %} {% for message in messages %}
+                    <form
+                        method="POST"
+                        action="/ecommerce/home/"
+                        class="flex flex-col items-center gap-10">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col">
+                                <label for="">Nome</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="">Sobrenome</label>
+                                {{ form.last_name }}
+                            </div>
+                            <div class="flex flex-col col-span-2">
+                                <label for="">Email</label>
+                                <input
+                                    class="p-2 border rounded-lg"
+                                    disabled
+                                    type="text"
+                                    value="{{user.email}}" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="">Profile</label>
+                                <select
+                                    disabled
+                                    title="Profile"
+                                    id="profile"
+                                    name="role"
+                                    class="p-2 border rounded-lg">
+                                    <option disabled selected value>
+                                        {{user.role}}
+                                    </option>
+                                    <option value="Cliente">Cliente</option>
+                                    <option value="Vendedor">Vendedor</option>
+                                </select>
+                            </div>
+                        </div>
 
-                    <p id="message_sucess" class="text-[#A7C957]">
-                        {{ message }}
-                    </p>
+                        <button
+                            name="edit_user"
+                            type="submit"
+                            class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
+                            Confirmar
+                        </button>
+                    </form>
+                </div>
 
-                    {% endfor %} {% endif %}
+                <div
+                    class="bg-white p-6 rounded-lg shadow-lg modal-content hidden"
+                    id="added-user-content">
+                    <div class="flex flex-row items-center justify-center mb-10">
+                        <h2 class="text-2xl font-bold">Adicionar Usuário</h2>
+                    </div>
 
+                    <form
+                        method="POST"
+                        action="/ecommerce/home/"
+                        class="flex flex-col items-center gap-10">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col">
+                                <label for="">Username</label>
+                                <input
+                                    name="username"
+                                    class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none"
+                                    type="text" />
+                            </div>
+                            <div class="flex flex-col col-span-2">
+                                <label for="">Email</label>
+                                <input
+                                    name="email"
+                                    class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none"
+                                    type="text" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="">Senha</label>
+                                <input
+                                    name="password"
+                                    type="password"
+                                    class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none" />
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="">Profile</label>
+                                <select
+                                    title="Profile"
+                                    name="role"
+                                    class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none">
+                                    <option selected value>
+                                        --Selecione--
+                                    </option>
+                                    <option value="Cliente">Cliente</option>
+                                    <option value="Vendedor">Vendedor</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button
+                            name="added-user"
+                            type="submit"
+                            class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
+                            Confirmar
+                        </button>
+                    </form>
+                </div>
+
+                <div
+                    class="bg-white p-6 rounded-lg shadow-lg modal-content hidden"
+                    id="added-fruits-content">
+                    <div class="flex flex-row items-center justify-center mb-10">
+                        <h2 class="text-2xl font-bold">Adicionar Frutas</h2>
+                    </div>
+
+                    <form
+                        method="POST"
+                        action="/ecommerce/home/"
+                        enctype="multipart/form-data"
+                        class="flex flex-col items-center gap-10">
+                        {% csrf_token %}
+                        <div class="items-start justify-start grid grid-cols-2 gap-4">
+                            <div class="flex flex-col">
+                                <label for="">Nome da fruta</label>
+                                {{ fruit_form.fruit_name }}
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="">Classificação</label>
+                                {{ fruit_form.rating }}
+                            </div>
+                            <div class="flex flex-col items-start justify-start">
+                                <label for="">Fresca</label>
+                                {{ fruit_form.fresh }}
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="">Quantidade</label>
+                                {{ fruit_form.quantity }}
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="">Preço</label>
+                                    {{ fruit_form.itemssalevalue_sale }}
+                            </div>
+                            <div class="flex flex-col"> 
+                                <label for="">Imagem</label>
+                                    {{ fruit_form.image }}
+                            </div>
+                        </div>
+
+                        <button
+                            name="added-fruit"
+                            type="submit"
+                            class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
+                            Confirmar
+                        </button>
+                    </form>
+                </div>
+
+                <div
+                    class="bg-white p-6 rounded-lg shadow-lg modal-content hidden max-h-[600px] overflow-auto"
+                    id="added-sale-content">
+                    <div class="flex flex-row items-center justify-center mb-10">
+                        <h2 class="text-2xl font-bold">Adicionar Vendas</h2>
+                    </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-4 p-4 bg-white shadow rounded">
+                                {{ sale_form.date_time.label_tag }}
+                                {{ sale_form.date_time }}
+                            </div>
+                            <div class="mb-4 p-4 bg-white shadow rounded">
+                                {{ sale_form.total_value.label_tag }}
+                                {{ sale_form.total_value }}
+                            </div>
+                            {{ sale_item_formset.management_form }}
+                            
+                            <div id="sale-items">
+                                {% for form in sale_item_formset %}
+                                    <div class="mb-4 p-4 bg-white shadow rounded sale-item-form">
+                                        {{ form.fruit.label_tag }}
+                                        {{ form.fruit }}
+                                        {{ form.quantity.label_tag }}
+                                        {{ form.quantity }}
+                                        {{ form.unitary_value.label_tag }}
+                                        {{ form.unitary_value }}
+                                        {{ form.discount.label_tag }}
+                                        {{ form.discount }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <button type="button" class="bg-blue-500 text-white p-2 rounded" onclick="addSaleItem()">Add Item</button>
+                            <button name="items-sale" type="submit" class="bg-green-500 text-white p-2 rounded">Submit</button>
+                        </form>
+                        
+                        <script>
+                            function addSaleItem() {
+                                var formIdx = document.querySelectorAll('.sale-item-form').length;
+                                var newForm = document.createElement('div');
+                                newForm.classList.add('mb-4', 'p-4', 'bg-white', 'shadow', 'rounded', 'sale-item-form');
+                                newForm.innerHTML = document.querySelectorAll('.sale-item-form')[0].innerHTML.replace(/__prefix__/g, formIdx);
+                                document.querySelector('#sale-items').appendChild(newForm);
+                                document.querySelectorAll('.sale-item-form')[formIdx].querySelectorAll('input, select').forEach(function(input) {
+                                    input.name = input.name.replace(/-\d+-/g, `-${formIdx}-`);
+                                    input.id = input.id.replace(/_\d+_/g, `_${formIdx}_`);
+                                    input.value = '';
+                                });
+                            }
+                        </script>
+                </div>
+
+                <div class="-translate-x-8 translate-y-2">
                     <button
-                        name="edit_user"
-                        type="submit"
-                        class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
-                        Confirmar
+                            id="close-modal"
+                            class="rounded ">
+                            <i class="bi bi-x-lg text-black text-xl hover:text-[#BC4749]"></i>
                     </button>
-                </form>
+                </div>
             </div>
+            
         </div>
 
-        <script src="/static/js/home.js"></script>
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                <div
+                    id="success-modal"
+                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5">
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg text-[#A7C957] flex flex-row gap-5 items-center justify-center"
+                            id="perfil-content">
+                            {{message}}
+                            <i class="bi bi-check-circle text-[#A7C957] text-2xl"></i>
+                        </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <script>
+            const menuBtn = document.getElementById("menu-btn");
+            const closeBtn = document.getElementById("close-btn");
+            const sidebar = document.getElementById("sidebar");
+            const modal = document.getElementById("modal");
+            const modalContents = document.querySelectorAll(".modal-content");
+            const closeModalBtn = document.getElementById("close-modal");
+            const openModalLinks = document.querySelectorAll(".open-modal");
+
+            function toggleSidebar() {
+                sidebar.classList.toggle("translate-x-full");
+                menuBtn.classList.toggle("hidden");
+                closeBtn.classList.toggle("hidden");
+            }
+
+            function closeSidebar() {
+                if (!sidebar.classList.contains("translate-x-full")) {
+                    sidebar.classList.add("translate-x-full");
+                    menuBtn.classList.remove("hidden");
+                    closeBtn.classList.add("hidden");
+                }
+            }
+
+            function openModal(targetId) {
+                modalContents.forEach((content) => {
+                    content.classList.add("hidden");
+                });
+                const targetContent = document.getElementById(targetId);
+                targetContent.classList.remove("hidden");
+                modal.classList.remove("hidden");
+            }
+
+            function closeModal() {
+                modal.classList.add("hidden");
+            }
+
+            menuBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                toggleSidebar();
+            });
+
+            closeBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                toggleSidebar();
+            });
+
+            document.addEventListener("click", (e) => {
+                if (
+                    !sidebar.contains(e.target) &&
+                    !menuBtn.contains(e.target) &&
+                    !closeBtn.contains(e.target)
+                ) {
+                    closeSidebar();
+                }
+            });
+
+            openModalLinks.forEach((link) => {
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute("data-target");
+                    closeSidebar();
+                    openModal(targetId);
+                });
+            });
+
+            closeModalBtn.addEventListener("click", closeModal);
+
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            const successModal = document.getElementById('success-modal');
+
+                if (successModal) {
+                    // Ocultar o modal de sucesso após 5 segundos
+                    setTimeout(() => {
+                        successModal.classList.add('hidden');
+                    }, 2500);
+                }
+        </script>
     </body>
 </html>
