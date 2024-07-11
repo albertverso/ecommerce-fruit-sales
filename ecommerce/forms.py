@@ -54,15 +54,3 @@ class SaleItemForm(forms.ModelForm):
 
 
 SaleItemFormSet = inlineformset_factory(Sale, SaleItem, form=SaleItemForm, extra=1, can_delete=True)
-
-
-class FrutaFilterForm(forms.Form):
-    nome = forms.CharField(required=False)
-    classificacao = forms.CharField(required=False)
-    fresca = forms.BooleanField(required=False)
-    preco_min = forms.DecimalField(decimal_places=2, required=False)
-    preco_max = forms.DecimalField(decimal_places=2, required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(FrutaFilterForm, self).__init__(*args, **kwargs)
-        self.fields['nome'].widget.attrs.update({'class': 'h-[38px] w-full border-transparent rounded-full bg-white focus:outline-none text-lg text-black absolute'})
