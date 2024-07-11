@@ -28,25 +28,33 @@
                     <p class="text-[#386641]">Frutas</p>
                 </div>
             </div>
-            <div
+            <form
+                action="/ecommerce/home/"        
+                method="GET"
+                action=""
                 class="flex h-[46px] w-full rounded-full border border-white bg-white items-center px-4 focus-within:border-[#A7C957] focus-within:text-[#A7C957] relative overflow-hidden hover:shadow-md">
+                {% csrf_token %}
                 <input
+                    autocomplete="off"
+                    id="search-input"
+                    name="search"
+                    value="{{ request.GET.query|default:'' }}"
                     placeholder="Pesquisar"
                     type="text"
                     class="h-[38px] w-full border-transparent rounded-full bg-white focus:outline-none text-lg text-black absolute" />
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-6 relative z-10 ml-auto">
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-            </div>
+                <button type="submit" class="relative z-10 ml-auto " id="search-btn">
+                    <i class="bi bi-search "></i>
+                </button>
+            </form>
+
+            <script>
+                window.addEventListener('load', function() {
+                    if (performance.navigation.type === 1) { // Check if page is reloaded
+                        window.location.href = window.location.pathname; // Redirect to base URL
+                    }
+                });
+            </script>
+        
             <div class="ml-auto flex flex-row gap-8">
                 <button class="flex rounded focus:outline-none">
                     <i
@@ -188,6 +196,8 @@
                             {% endif %}
                         </div>
                     </div>
+                    {% empty %}
+                        <p class="text-2xl font-bold text-[#6A994E] text-center">Nenhuma fruta encontrada.</p>
                     {% endfor %}
                 </div>
             </section>
@@ -236,7 +246,63 @@
             </div>
             {% elif is_vendedor %}
 
-            <div></div>
+            <div class="flex flex-col items-center justify-center mt-10 w-full">
+                <div
+                    class="flex text-4xl font-bold text-[#386641] relative items-center justify-center">
+                    <img
+                        src="/static/images/signpost1.png"
+                        alt=""
+                        class="w-[200px] h-[140px]" />
+                    <p class="absolute text-center mt-5">Usuários</p>
+                </div>
+
+                <table class="min-w-full bg-white border border-[#6A994E]">
+                    <thead class="bg-[#6A994E] text-white">
+                        <tr>
+                            <th class="w-1/5 text-left py-3 px-4">Horario da venda</th>
+                            <th class="w-1/5 text-left py-3 px-4">Valor total da venda</th>
+                            <th class="w-1/2 text-left py-3 px-4">Items da venda</th>
+                            <th class="w-1/6 text-left py-3 px-4">Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for items in items_list %}
+                        <tr class="text-lg font-semibold break-normal">
+                            <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E]">
+                                {{ items.sale.date_time }}
+                            </td>
+                            <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E]">
+                                {{ items.sale.total_value }}
+                            </td>
+                            <td class="w-full text-left py-3 px-4 flex flex-row justify-between gap-5 border-r-[1px] border-r-[#6A994E]"> 
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Fruta  </p> <p>{{ items.fruit.fruit_name }}</p>
+                                </div>
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Quant.  </p> <p> {{ items.quantity }} </p>
+                                </div>
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Valor Uni. </p> <p> {{ items.unitary_value }} </p> 
+                                </div>
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <p> Desconto </p>  <p> {{ items.discount }} </p> 
+                                </div>
+                            </td>
+                            <td class="w-1/6 text-left py-3 px-4 p-2">
+                                <div class="flex items-center justify-center gap-8">
+                                    <button>
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button>
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
             {% endif %}
         </div>
@@ -274,13 +340,6 @@
                                     type="text"
                                     value="{{user.email}}" />
                             </div>
-                            <!-- <div class="flex flex-col">
-                            <label for="">Senha</label>
-                            <input
-                                name="password"
-                                type="text"
-                                class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none" />
-                        </div> -->
                             <div class="flex flex-col">
                                 <label for="">Profile</label>
                                 <select
