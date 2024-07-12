@@ -37,7 +37,7 @@ class SaleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SaleForm, self).__init__(*args, **kwargs)
         self.fields['date_time'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
-        self.fields['total_value'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
+        self.fields['total_value'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]', 'type': 'datetime-local',})
 
 class SaleItemForm(forms.ModelForm):
     class Meta:
@@ -52,17 +52,4 @@ class SaleItemForm(forms.ModelForm):
         self.fields['discount'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
     
 
-
 SaleItemFormSet = inlineformset_factory(Sale, SaleItem, form=SaleItemForm, extra=1, can_delete=True)
-
-
-class FrutaFilterForm(forms.Form):
-    nome = forms.CharField(required=False)
-    classificacao = forms.CharField(required=False)
-    fresca = forms.BooleanField(required=False)
-    preco_min = forms.DecimalField(decimal_places=2, required=False)
-    preco_max = forms.DecimalField(decimal_places=2, required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(FrutaFilterForm, self).__init__(*args, **kwargs)
-        self.fields['nome'].widget.attrs.update({'class': 'h-[38px] w-full border-transparent rounded-full bg-white focus:outline-none text-lg text-black absolute'})
