@@ -7,28 +7,8 @@ from ecommerce.forms import UserProfileForm, FruitForm, SaleForm, SaleItemFormSe
 from django.contrib import messages
 from django.contrib.messages import get_messages
 import time
-from django.utils import timezone
 from django.forms import modelformset_factory
 # Create your views here.
-
-def sigh_up(request):
-    if request.method == "GET":
-        return render(request, 'sigh_up.html')
-    elif request.method == "POST":
-        username = request.POST.get('user_name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        user = User.objects.filter(username=username).first()
-
-        if user: 
-            return HttpResponse('Ja existe um usuario com esse nome')
-      
-        user_created = User.objects.create(username=username, email=email)
-        user_created.set_password(password)  # Criptografa a senha
-        user_created.save()
-
-        return HttpResponse(f'{user_created}')
 
 def login_user(request):
     
@@ -51,7 +31,11 @@ def login_user(request):
                 login(request, user)
                 return redirect('home')
             else:
-                return messages.error(request, 'username ou senha invalida')
+                context = {
+                'messages': get_messages(request)
+                }
+                messages.error(request, 'username ou senha invalida')
+                return render(request, 'login_user.html', context)
 
         elif 'sigh_up' in request.POST:
 
@@ -71,15 +55,25 @@ def login_user(request):
             messages.success(request, 'Profile created successfully')
             return redirect('home')
 
+class ValorGuardado:
+    def __init__(self):
+        self.valor = None
+
+    def guardar_valor(self, valor):
+        self.valor = valor
+
+    def mostrar_valor(self):
+        return self.valor
+
 @login_required(login_url="/ecommerce/login_user")
 def home_page(request, id=None):
-
+    valor = ValorGuardado()
     if request.method == "GET":
         form_user = UserProfileForm(instance=request.user)
         fruit_form = FruitForm()
         sale_form = SaleForm()
         sale_item_formset = SaleItemFormSet()
-
+      
         user = request.user
        
         user_list = User.objects.filter(role__in=['cliente', 'vendedor'])
@@ -98,6 +92,39 @@ def home_page(request, id=None):
             fruits_list = Fruit.objects.all()
             if 'search' in request.GET:
                 return redirect('home')
+
+
+        global get_query_user
+        get_query_user = request.GET.get('get-user', '').strip()
+
+        if get_query_user:
+            user_instance = get_object_or_404(User, id=get_query_user)
+
+            form = UserProfileForm(instance=user_instance)
+
+            context = {
+            'edit': get_query_user,
+            'is_admin': True,
+            'fruits': fruits_list,
+            'list_user': user_list,
+            'user': user,
+            'form': form,
+            'fruit_form': fruit_form,
+            'messages': get_messages(request)
+            }
+            return render(request, 'home.html', context )
+        elif user.role == 'Admin':
+            context = {
+            'is_admin': True,
+            'fruits': fruits_list,
+            'list_user': user_list,
+            'user': user,
+            'form': form_user,
+            'fruit_form': fruit_form,
+            'messages': get_messages(request)
+            }
+            return render(request, 'home.html', context )
+
         
         if user.role == 'Cliente':
             context = {
@@ -123,6 +150,7 @@ def home_page(request, id=None):
 
         elif user.role == 'Admin':
             context = {
+            'edit': get_user_object,
             'is_admin': True,
             'fruits': fruits_list,
             'list_user': user_list,
@@ -133,89 +161,99 @@ def home_page(request, id=None):
             }
             return render(request, 'home.html', context ) 
         else:
-            return HttpResponse("Access Denied")
+            return messages.error(request, 'Erro')
     elif request.method == "POST":
+        if 'logout' in request.POST:
+            logout(request)
+            return redirect('home')   
 
-            if 'logout' in request.POST:
-                logout(request)
-                return redirect('home')   
+        elif 'edit_user' in request.POST:
+            form = UserProfileForm(request.POST, instance=request.user)
 
-            elif 'edit_user' in request.POST:
-                form = UserProfileForm(request.POST, instance=request.user)
-                if form.is_valid():
-                    form.save()
+            if form.is_valid():
+                form.save()
 
-                    messages.success(request, 'Profile updated successfully')
-                    return redirect('home')
-
-            elif 'added-user' in request.POST:
-                username = request.POST.get('username')
-                email = request.POST.get('email')
-                password = request.POST.get('password')
-                role = request.POST.get('role')
-
-                user = User.objects.filter(username=username).first()
-
-                if user: 
-                    return messages.error(request, 'Username já existe')
-            
-                user_created = User.objects.create(username=username, email=email, role=role)
-                user_created.set_password(password)  # Criptografa a senha
-                user_created.save()
-
-                messages.success(request, 'Profile created successfully')
-
+                messages.success(request, 'Profile updated successfully')
                 return redirect('home')
-            elif 'added-fruit' in request.POST:
+            else:
+                messages.error(request, 'Error')
+                return redirect('home')
 
-                fruit_form = FruitForm(request.POST, request.FILES)
+        elif 'added-user' in request.POST:
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            role = request.POST.get('role')
 
-                if fruit_form.is_valid():
-                    fruit_form.save()
-                    messages.success(request, 'Fruit created successfully')
-                    return redirect('home')
+            user = User.objects.filter(username=username).first()
+
+            if user: 
+                return messages.error(request, 'Username já existe')
+        
+            user_created = User.objects.create(username=username, email=email, role=role)
+            user_created.set_password(password)  # Criptografa a senha
+            user_created.save()
+
+            messages.success(request, 'Profile created successfully')
+
+            return redirect('home')
+        elif 'added-fruit' in request.POST:
+
+            fruit_form = FruitForm(request.POST, request.FILES)
+
+            if fruit_form.is_valid():
+                fruit_form.save()
+                messages.success(request, 'Fruit created successfully')
+                return redirect('home')
 
 
-            elif 'items-sale' in request.POST:
-                sale_form = SaleForm(request.POST)
-                sale_item_formset = SaleItemFormSet(request.POST)
-
-                sale_form.data = sale_form.data.copy()
-                sale_form.data['date_time'] = timezone.now()
-                sale_form.data['total'] = 100.00
+        elif 'items-sale' in request.POST:
+            sale_form = SaleForm(request.POST)
+            sale_item_formset = SaleItemFormSet(request.POST)
+            
+            if sale_form.is_valid() and sale_item_formset.is_valid():
+                sale = sale_form.save(commit=False)
+                sale.user = request.user
+                sale.save()
                 
-                if sale_form.is_valid() and sale_item_formset.is_valid():
-                    sale = sale_form.save(commit=False)
-                    sale.user = request.user
-                    sale.save()
-                    
-                    sale_items = sale_item_formset.save(commit=False)
-                    for item in sale_items:
-                        item.sale = sale
-                        item.save()
+                sale_items = sale_item_formset.save(commit=False)
+                for item in sale_items:
+                    item.sale = sale
+                    item.save()
 
-                    messages.success(request, 'Sale successfully')
-                    return redirect('home')
+                messages.success(request, 'Sale successfully')
+                return redirect('home')
 
-            elif 'btn-delete-user' in request.POST:
-                user = get_object_or_404(User, id=id)
-                user.delete()
-                messages.success(request, "Usuário deletado com sucesso.")
-                return redirect('home') 
+        elif 'btn-delete-user' in request.POST:
+            user = get_object_or_404(User, id=id)
+            user.delete()
+            messages.success(request, "Usuário deletado com sucesso.")
+            return redirect('home') 
 
 
-            elif 'btn-delete-sale' in request.POST:
-                sale = get_object_or_404(Sale, id=id)
-                sale.delete()
-                messages.success(request, "Venda deletada com sucesso.")
-                return redirect('home') 
+        elif 'btn-delete-sale' in request.POST:
+            sale = get_object_or_404(Sale, id=id)
+            sale.delete()
+            messages.success(request, "Venda deletada com sucesso.")
+            return redirect('home') 
 
-            elif 'edit_user_form' in request.POST:
-                user = get_object_or_404(User, id=id)
-                form = User(request.POST, instance=user)
-                if form.is_valid():
-                    form.save()
-                    messages.success(request, "Usuário editado com sucesso.")
-                    return redirect('home')  # Redireciona para a lista de usuários após salvar
-                else:
-                    messages.error(request, 'Erro')
+        elif 'btn-confirm-edit' in request.POST:
+          
+
+            user_instance = get_object_or_404(User, id=get_query_user)
+
+            print(user_instance)
+
+            form_user = UserProfileForm(request.POST ,instance=user_instance)
+
+            if form_user.is_valid():
+                form_user.save()
+                # redirecionar ou fazer algo após salvar
+                messages.success(request, "Usuário editado com sucesso.")
+                return redirect('home')
+            else:
+                return HttpResponse('sdfsdfsdfsdf')
+
+        else:
+            messages.error(request, 'Error')
+            return redirect('home')

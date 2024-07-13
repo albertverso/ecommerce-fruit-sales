@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Nomes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="w-1/3 px-4 py-2">Nome</th>
+                    <th class="w-1/3 px-4 py-2">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="nameTable" class="text-gray-700">
+                <!-- Rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h2 class="text-xl mb-4">Editar Nome</h2>
+            <input type="text" id="nameInput" class="border p-2 w-full mb-4" placeholder="Novo nome">
+            <div class="flex justify-end">
+                <button id="cancelButton" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancelar</button>
+                <button id="saveButton" class="bg-blue-500 text-white px-4 py-2 rounded">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const names = ["Alice", "Bob", "Charlie", "Diana"];
+        const nameTable = document.getElementById('nameTable');
+        const editModal = document.getElementById('editModal');
+        const nameInput = document.getElementById('nameInput');
+        let currentEditIndex = null;
+
+        function renderTable() {
+            nameTable.innerHTML = '';
+            names.forEach((name, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="border px-4 py-2">${name}</td>
+                    <td class="border px-4 py-2">
+                        <button onclick="openEditModal(${index})" class="bg-green-500 text-white px-4 py-2 rounded">Editar</button>
+                    </td>
+                `;
+                nameTable.appendChild(row);
+            });
+        }
+
+        function openEditModal(index) {
+            currentEditIndex = index;
+            nameInput.value = names[index];
+            editModal.classList.remove('hidden');
+        }
+
+        document.getElementById('cancelButton').addEventListener('click', () => {
+            editModal.classList.add('hidden');
+        });
+
+        document.getElementById('saveButton').addEventListener('click', () => {
+            const newName = nameInput.value.trim();
+            if (newName) {
+                names[currentEditIndex] = newName;
+                renderTable();
+                editModal.classList.add('hidden');
+            }
+        });
+
+        renderTable();
+    </script>
+</body>
+</html>

@@ -226,58 +226,73 @@
                             </td>
                             <td class="w-1/3 text-left py-3 px-4">
                                 <div class="flex items-center justify-center gap-8">
-                                    <button id="btn-edit-user">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
+                                    <form method="GET">
+                                        {% csrf_token %}
+                                        <input hidden type="text" value="{{user.id}} " name="get-user">
+                                        <button id="btn-get-user" type="submit" value="{{ request.GET.query|default:'' }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    </form>
                                     <form action="{% url 'delete' user.id %}" method="POST">
                                         {% csrf_token %}
                                         <button type="submit" name="btn-delete-user" onclick="return confirm('Tem certeza que deseja deletar este usuário?');">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </form>
+                                    {% if edit %}
+                                    <div class="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-5 gap-5">
+                                        <div class="bg-white flex flex-col p-6 rounded-lg shadow-lg w-[400px] items-center justify-center" >
+                                            <div class="flex flex-row items-center justify-center mb-10">
+                                                <h2 class="text-2xl font-bold">Usuário</h2>
+                                            </div>
+                                            <form method="POST" action="/ecommerce/home/" class="flex flex-col items-center gap-10">
+                                                {% csrf_token %}
+                                                <div class="grid grid-cols-2 gap-4">
+                                                    <div class="flex flex-col">
+                                                        <label for="">Nome</label>
+                                                        {{ form.first_name }}
+                                                    </div>
+                                                    <div class="flex flex-col">
+                                                        <label for="">Sobrenome</label>
+                                                        {{ form.last_name }}
+                                                    </div>
+                                                    <div class="flex flex-col col-span-2">
+                                                        <label for="">Email</label>
+                                                        {{form.email }}
+                                                    </div>
+                                                    <div class="flex flex-col col-span-2 hidden">
+                                                        <label for="">Senha</label>
+                                                        {{form.password}}
+                                                    </div>
+                                                    <div class="flex flex-col">
+                                                        <label for="">Profile</label>
+                                                        {{form.role}}  
+                                                    </div>
+                                                </div>
+                                                
+                                                <input hidden type="text" value="{{ form.id }} " name="post-user">
+                                                <button type="submit" name="btn-confirm-edit"
+                                                    class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
+                                                    Confirmar
+                                                </button>
+                                            </form>
+                                            <button     
+                                                    onclick="reloadAndReset()"
+                                                    type="submit"
+                                                    class="p-2 font-semibold rounded-lg text-white bg-[#BC4749] hover:bg-[#702829] mt-5 w-24">
+                                                    Fechar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        function reloadAndReset() {
+                                            window.location.href = window.location.origin + window.location.pathname;
+                                        }
+                                        </script>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
-
-                        <div id="edit-modal-user" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-5 gap-5">
-                            <div class="bg-white p-6 rounded-lg shadow-lg" >
-                                <div class="flex flex-row items-center justify-center mb-10">
-                                    <h2 class="text-2xl font-bold">Usuário</h2>
-                                </div>
-                                <form method="POST" action="/ecommerce/home/" class="flex flex-col items-center gap-10">
-                                    {% csrf_token %}
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="flex flex-col">
-                                            <label for="">Nome</label>
-                                            {{ user.first_name }}
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <label for="">Sobrenome</label>
-                                            {{ user.last_name }}
-                                        </div>
-                                        <div class="flex flex-col col-span-2">
-                                            <label for="">Email</label>
-                                            <input class="p-2 border rounded-lg" disabled type="text" value="{{user.email}}" />
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <label for="">Profile</label>
-                                            <select title="Profile" id="profile" name="role" class="p-2 border rounded-lg">
-                                                <option selected value>
-                                                    {{user.role}}
-                                                </option>
-                                                <option value="Cliente">Cliente</option>
-                                                <option value="Vendedor">Vendedor</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <button name="edit_user" type="submit"
-                                        class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
-                                        Confirmar
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
                      
                         {% endfor %}
                     </tbody>
@@ -372,26 +387,15 @@
                             </div>
                             <div class="flex flex-col col-span-2">
                                 <label for="">Email</label>
-                                <input
-                                    class="p-2 border rounded-lg"
-                                    disabled
-                                    type="text"
-                                    value="{{user.email}}" />
+                                {{form.email}}
+                            </div>
+                            <div class="flex flex-col col-span-2 hidden">
+                                <label for="">Senha</label>
+                                {{form.password}}
                             </div>
                             <div class="flex flex-col">
                                 <label for="">Profile</label>
-                                <select
-                                    disabled
-                                    title="Profile"
-                                    id="profile"
-                                    name="role"
-                                    class="p-2 border rounded-lg">
-                                    <option disabled selected value>
-                                        {{user.role}}
-                                    </option>
-                                    <option value="Cliente">Cliente</option>
-                                    <option value="Vendedor">Vendedor</option>
-                                </select>
+                                {{form.role}}
                             </div>
                         </div>
 
@@ -527,6 +531,8 @@
                             <div class="mb-4 p-4 bg-white shadow rounded">
                                 {{ sale_form.total_value.label_tag }}
                                 {{ sale_form.total_value }}
+                                {{ sale_form.date_time.label_tag }}
+                                {{ sale_form.date_time }}
                             </div>
                             {{ sale_item_formset.management_form }}
                             <div id="sale-items">
@@ -547,21 +553,7 @@
                             <button type="button" class="bg-blue-500 text-white p-2 rounded" onclick="addSaleItem()">Add Item</button>
                             <button name="items-sale" type="submit" class="bg-green-500 text-white p-2 rounded">Submit</button>
                         </form>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var now = new Date();
-                                var year = now.getFullYear();
-                                var month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-                                var day = String(now.getDate()).padStart(2, '0');
-                                var hours = String(now.getHours()).padStart(2, '0');
-                                var minutes = String(now.getMinutes()).padStart(2, '0');
-                                var currentTime = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
                     
-                                document.querySelector('input[type="datetime-local"]').value = currentTime;
-                            });
-                        </script>
-                        
                         <script>
                             function addSaleItem() {
                                 var formIdx = document.querySelectorAll('.sale-item-form').length;
@@ -697,16 +689,12 @@
                     }, 2500);
                 }
             
-                
-            const btnEdit = document.getElementById('btn-edit-user')
             const modalEditUser = document.getElementById('edit-modal-user')
-            
-            function a() {
+                
+            document.getElementById('btn-edit-user').addEventListener("click", () => {
                 modalEditUser.classList.remove("hidden");
-                modalEditUser.classList.add("flex");
-            }
-
-            btnEdit.addEventListener("click", a)
+            })
+            
         </script>
     </body>
 </html>
