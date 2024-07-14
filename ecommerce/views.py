@@ -31,11 +31,8 @@ def login_user(request):
                 login(request, user)
                 return redirect('home')
             else:
-                context = {
-                'messages': get_messages(request)
-                }
                 messages.error(request, 'username ou senha invalida')
-                return render(request, 'login_user.html', context)
+                return redirect('home')
 
         elif 'sigh_up' in request.POST:
 
@@ -46,28 +43,19 @@ def login_user(request):
             user = User.objects.filter(username=username).first()
 
             if user: 
-                return messages.error(request, 'Ja existe um usuario com esse nome')
+                messages.error(request, 'Ja existe um usuario com esse nome')
+                return redirect('home')
 
             user_created = User.objects.create(username=username, email=email)
             user_created.set_password(password)  # Criptografa a senha
             user_created.save()
 
-            messages.success(request, 'Profile created successfully')
+            messages.success(request, 'Conta criada com sucesso')
             return redirect('home')
-
-class ValorGuardado:
-    def __init__(self):
-        self.valor = None
-
-    def guardar_valor(self, valor):
-        self.valor = valor
-
-    def mostrar_valor(self):
-        return self.valor
 
 @login_required(login_url="/ecommerce/login_user")
 def home_page(request, id=None):
-    valor = ValorGuardado()
+
     if request.method == "GET":
         form_user = UserProfileForm(instance=request.user)
         fruit_form = FruitForm()
@@ -75,27 +63,31 @@ def home_page(request, id=None):
         sale_item_formset = SaleItemFormSet()
       
         user = request.user
-       
         user_list = User.objects.filter(role__in=['cliente', 'vendedor'])
-
         sales_list = Sale.objects.filter(user=request.user)
-
         items_list = SaleItem.objects.filter(sale__user=request.user)
-
+        filter_fruit = request.GET.get('filter-class')
+        filter_fruit_fresh = request.GET.get('filter-fresh')
         query = request.GET.get('search')
-
         fruits_list = Fruit.objects.all()
 
         if query:
             fruits_list = Fruit.objects.filter(fruit_name__icontains=query)
+        elif filter_fruit and filter_fruit_fresh:
+            fruits_list = Fruit.objects.filter(rating=filter_fruit, fresh=(filter_fruit_fresh.lower() == 'true'))
+        elif filter_fruit:
+            fruits_list = Fruit.objects.filter(rating=filter_fruit)
+        elif filter_fruit_fresh is not None and filter_fruit_fresh != '':
+            fruits_list = Fruit.objects.filter(fresh=(filter_fruit_fresh.lower() == 'true'))
         else:
             fruits_list = Fruit.objects.all()
             if 'search' in request.GET:
                 return redirect('home')
 
-
         global get_query_user
         get_query_user = request.GET.get('get-user', '').strip()
+        global get_query_fruit
+        get_query_fruit = request.GET.get('get-fruit', '').strip()
 
         if get_query_user:
             user_instance = get_object_or_404(User, id=get_query_user)
@@ -104,6 +96,22 @@ def home_page(request, id=None):
 
             context = {
             'edit': get_query_user,
+            'is_admin': True,
+            'fruits': fruits_list,
+            'list_user': user_list,
+            'user': user,
+            'form': form,
+            'fruit_form': fruit_form,
+            'messages': get_messages(request)
+            }
+            return render(request, 'home.html', context )
+        elif get_query_fruit:
+            fruit_instance = get_object_or_404(Fruit, id=get_query_fruit)
+
+            form = FruitForm(instance=fruit_instance)
+
+            context = {
+            'edit_fruit': get_query_fruit,
             'is_admin': True,
             'fruits': fruits_list,
             'list_user': user_list,
@@ -173,7 +181,7 @@ def home_page(request, id=None):
             if form.is_valid():
                 form.save()
 
-                messages.success(request, 'Profile updated successfully')
+                messages.success(request, 'Perfil editado')
                 return redirect('home')
             else:
                 messages.error(request, 'Error')
@@ -188,13 +196,13 @@ def home_page(request, id=None):
             user = User.objects.filter(username=username).first()
 
             if user: 
-                return messages.error(request, 'Username já existe')
+                return messages.error(request, 'Username já existente')
         
             user_created = User.objects.create(username=username, email=email, role=role)
             user_created.set_password(password)  # Criptografa a senha
             user_created.save()
 
-            messages.success(request, 'Profile created successfully')
+            messages.success(request, 'Usuário adicionado')
 
             return redirect('home')
         elif 'added-fruit' in request.POST:
@@ -203,7 +211,7 @@ def home_page(request, id=None):
 
             if fruit_form.is_valid():
                 fruit_form.save()
-                messages.success(request, 'Fruit created successfully')
+                messages.success(request, 'Fruta adicionada')
                 return redirect('home')
 
 
@@ -221,7 +229,7 @@ def home_page(request, id=None):
                     item.sale = sale
                     item.save()
 
-                messages.success(request, 'Sale successfully')
+                messages.success(request, 'Venda cadastrada')
                 return redirect('home')
 
         elif 'btn-delete-user' in request.POST:
@@ -238,12 +246,7 @@ def home_page(request, id=None):
             return redirect('home') 
 
         elif 'btn-confirm-edit' in request.POST:
-          
-
             user_instance = get_object_or_404(User, id=get_query_user)
-
-            print(user_instance)
-
             form_user = UserProfileForm(request.POST ,instance=user_instance)
 
             if form_user.is_valid():
@@ -252,8 +255,21 @@ def home_page(request, id=None):
                 messages.success(request, "Usuário editado com sucesso.")
                 return redirect('home')
             else:
-                return HttpResponse('sdfsdfsdfsdf')
+                messages.error(request, "Error")
+                return redirect('home')
+        elif 'btn-confirm-edit-fruit' in request.POST:
 
+            fruit_instance = get_object_or_404(Fruit, id=get_query_fruit)
+            form_fruit = FruitForm(request.POST ,instance=fruit_instance)
+
+            if form_fruit.is_valid():
+                form_fruit.save()
+                # redirecionar ou fazer algo após salvar
+                messages.success(request, "Fruta editada com sucesso.")
+                return redirect('home')
+            else:
+                messages.error(request, "Error")
+                return redirect('home')
         else:
             messages.error(request, 'Error')
             return redirect('home')
