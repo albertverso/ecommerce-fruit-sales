@@ -87,7 +87,7 @@
             {% for message in messages %}
                 {% if message.tags == 'success' %}
                 <div
-                    id="success-modal"
+                    id="modal-message"
                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5">
                         <div
                             class="bg-white p-6 rounded-lg shadow-lg text-[#A7C957] flex flex-row gap-5 items-center justify-center"
@@ -98,7 +98,7 @@
                 </div>
                 {% elif message.tags == 'error' %}
                 <div
-                    id="success-modal"
+                    id="modal-message"
                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5">
                         <div
                             class="bg-white p-6 rounded-lg shadow-lg text-[#BC4749] flex flex-row gap-5 items-center justify-center"
@@ -137,13 +137,13 @@
                 sighIn.classList.add('hidden');
             });
 
-            const successModal = document.getElementById('success-modal');
+            const successModal = document.getElementById('modal-message');
 
                 if (successModal) {
-                    // Ocultar o modal de sucesso após 5 segundos
+                    // Ocultar o modal de sucesso após 1 segundos
                     setTimeout(() => {
                         successModal.classList.add('hidden');
-                    }, 2500);
+                    }, 1000);
                 }
         </script>
 

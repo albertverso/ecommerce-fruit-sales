@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
     <head>
@@ -16,10 +15,11 @@
             href="/static/images/fruit_icon.png" />
 
         <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
+        {% load static %}
     </head>
-    <body class="flex flex-col bg-[#F2E8CF]" id="main-content">
+    <body class="flex flex-col bg-[#F2E8CF]"  id="main-content">
         <header
-            class="flex flex-row items-end justify-start px-[100px] py-5 gap-10 mb-20">
+            class="flex flex-row items-end justify-start px-[100px] py-5 gap-10 mb-10">
             <div class="flex flex-row items-end gap-2">
                 <div class="icon w-32 h-32"></div>
                 <div class="flex flex-row text-6xl font-bold gap-2">
@@ -31,7 +31,6 @@
             <form
                 action="/ecommerce/home/"        
                 method="GET"
-                action=""
                 class="flex h-[46px] w-full rounded-full border border-white bg-white items-center px-4 focus-within:border-[#A7C957] focus-within:text-[#A7C957] relative overflow-hidden hover:shadow-md">
                 {% csrf_token %}
                 <input
@@ -114,10 +113,7 @@
                                 >Adicionar vendas</a
                             >
                             {% endif %}
-
-
                         </nav>
-
                         <form
                             method="POST"
                             action="/ecommerce/home/"
@@ -132,21 +128,84 @@
                             </button>
                         </form>
                     </div>
-
                     <div id="modal-container"></div>
                 </div>
             </div>
         </header>
 
         <div
-            class="flex flex-col items-center justify-center h-full bg-slate-100 px-[100px] bg-repeat bg-[length:100px_100px] pb-10 main-content"
+            class="flex flex-col items-center justify-center h-full bg-slate-100 px-[100px] bg-fixed bg-repeat bg-[length:500px_400px] pb-10 main-content"
             style="background-image: url('/static/images/cover-trans.png')">
             <section class="flex flex-col items-center justify-center">
-                <div
-                    class="flex text-4xl font-bold text-white bg-[#386641] mb-4 mt-4 py-2 px-4 rounded-xl items-center justify-center">
-                    <p class="text-center">
-                        Frutas Disponiveis
-                    </p>
+                <div class="flex flex-row items-center">
+                    <div
+                        class="flex text-4xl font-bold text-white bg-[#386641] mb-4 mt-4 py-2 px-4 rounded-xl items-center justify-center">
+                        <p class="text-center">
+                            Frutas Disponíveis
+                        </p>
+                    </div>
+                    <div class="flex absolute ml-[560px] gap-3">
+                            <button id="btn-filter" type="submit" class="flex flex-row gap-2 bg text-xl font-bold text-white bg-[#386641] rounded-lg p-2">
+                                Filtrar
+                                <i class="bi bi-funnel"></i>
+                            </button>
+                            <button onclick="reloadAndResett()"
+                            class="bg-[#386641] rounded-lg text-white px-2">
+                            <i class="bi bi-eraser text-2xl"></i>
+                            </button>
+                            <script>
+                                function reloadAndResett() {
+                                    window.location.href = window.location.origin + window.location.pathname;
+                                }
+                            </script>
+                    </div>
+                    <!-- Modal -->
+                    <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5 hidden">
+                        <div class="bg-white rounded-lg shadow-lg flex flex-col p-5 items-center justify-center">
+                            <div>
+                                <h2 class="text-xl font-semibold">Filtro</h2>
+                            </div>
+                            <form action="/ecommerce/home/" method="GET" class="mt-4 flex flex-col mb-4 items-center justify-center">
+                                <div>
+                                    <label class="block mb-2">Classificação</label>
+                                    <select
+                                        value="{{ request.GET.query|default:'' }}"
+                                        name="filter-class"
+                                        class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none">
+                                        <option selected value>
+                                            --Selecione--
+                                        </option>
+                                        <option value="Extra">Extra</option>
+                                        <option value="Primeira">Primeira</option>
+                                        <option value="Segunda">Segunda</option>
+                                        <option value="Terceira">Terceira</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-end flex-col">
+                                    <label class="block">Fresca</label>
+                                    <input type="checkbox" name="filter-fresh" value="true" />
+                                </div>
+                                <div class="mt-4 justify-center">
+                                    <button type="submit" class="bg-[#A7C957] hover:bg-[#386641] text-white font-bold p-2 rounded">Confirmar</button>
+                                </div>
+                            </form>
+                            <button id="closeModalBtn"
+                                class="bg-[#BC4749] hover:bg-[#852d2f] w-[94px] text-white font-bold p-2 rounded">
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        // JavaScript para exibir/ocultar o modal
+                        document.getElementById('btn-filter').addEventListener('click', function () {
+                            document.getElementById('filterModal').classList.remove('hidden');
+                        });
+
+                        document.getElementById('closeModalBtn').addEventListener('click', function () {
+                            document.getElementById('filterModal').classList.add('hidden');
+                        });
+                    </script>
                 </div>
                 <div class="grid grid-cols-4 gap-10">
                     {% for fruit in fruits %}
@@ -169,7 +228,7 @@
                             <p>Classificação: {{ fruit.rating }}</p>
                             <p>Quantidade: {{ fruit.quantity }}</p>
                             <p class="font-semibold">
-                                {{ fruit.itemssalevalue_sale }} $
+                                R$ {{ fruit.itemssalevalue_sale }} 
                             </p>
                         </div>
                         <div class="flex items-center mt-5">
@@ -179,10 +238,67 @@
                                 Vender
                             </button>
                             {% elif is_admin %}
-                            <button
-                                class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
-                                Editar
-                            </button>
+                            <form method="GET">
+                                {% csrf_token %}
+                                <input hidden type="text" value="{{fruit.id}} " name="get-fruit">
+                                <button id="btn-get-user" type="submit" value="{{ request.GET.query|default:'' }}" class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
+                                    Editar
+                                </button>
+                            </form>
+                                {% if edit_fruit %}
+                                <!-- Modal -->
+                                <div class="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-5 gap-5">
+                                    <div class="bg-white flex flex-col p-6 rounded-lg shadow-lg w-[400px] items-center justify-center">
+                                        <div class="flex flex-row items-center justify-center mb-10">
+                                            <h2 class="text-2xl font-bold">Editar Fruta</h2>
+                                        </div>
+                                        <form method="POST" action="/ecommerce/home/" class="flex flex-col items-center gap-10">
+                                            {% csrf_token %}
+                                            <div class="items-start justify-start grid grid-cols-2 gap-4">
+                                                <div class="flex flex-col">
+                                                    <label for="">Nome</label>
+                                                    {{ form.fruit_name }}
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <label for="">Classificação</label>
+                                                    {{ form.rating }}
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <label for="">Quantidade</label>
+                                                    {{form.quantity }}
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <label for="">Valor Uni.</label>
+                                                    {{form.itemssalevalue_sale}}
+                                                </div>
+                                                <div class="flex flex-col items-start justify-start">
+                                                    <label for="">Fresca</label>
+                                                    {{form.fresh}}
+                                                </div>
+                                                <div class="flex flex-col col-span-2">
+                                                    {{form.image}}
+                                                </div>
+                                            </div>
+                                
+                                            <input hidden type="text" value="{{ form.id }} " name="post-user">
+                                            <button type="submit" name="btn-confirm-edit-fruit"
+                                                class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
+                                                Confirmar
+                                            </button>
+                                        </form>
+                                        <button onclick="reloadAndReset()" type="submit"
+                                            class="p-2 font-semibold rounded-lg text-white bg-[#BC4749] hover:bg-[#702829] mt-5 w-[90px]">
+                                            Fechar
+                                        </button>
+                                    </div>
+                                </div>
+                                <script>
+                                    function reloadAndReset() {
+                                        window.location.href = window.location.origin + window.location.pathname;
+                                    }
+                                </script>
+                                {% endif %}
+
                             {% else %}
                             <button
                                 class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
@@ -206,22 +322,26 @@
                 <table class="min-w-full bg-white border border-[#6A994E]">
                     <thead class="bg-[#6A994E] text-white">
                         <tr>
-                            <th class="w-1/3 text-left py-3 px-4">Username</th>
+                            <th class="w-1/4 text-left py-3 px-4">Nome</th>
+                            <th class="w-1/4 text-left py-3 px-4">Username</th>
                             <th class="w-1/3 text-left py-3 px-4">Email</th>
-                            <th class="w-1/3 text-left py-3 px-4">Profile</th>
+                            <th class="w-1/4 text-left py-3 px-4">Profile</th>
                             <th class="w-1/3 text-left py-3 px-4">Editar</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in list_user %}
                         <tr class="text-lg font-semibold">
-                            <td class="w-1/3 text-left py-3 px-4">
+                            <td class="w-1/4 text-left py-3 px-4">
+                                {{ user.first_name }} {{user.last_name}}
+                            </td>
+                            <td class="w-1/4 text-left py-3 px-4">
                                 {{ user.username }}
                             </td>
                             <td class="w-1/3 text-left py-3 px-4">
                                 {{ user.email }}
                             </td>
-                            <td class="w-1/3 text-left py-3 px-4">
+                            <td class="w-1/4 text-left py-3 px-4">
                                 {{ user.role }}
                             </td>
                             <td class="w-1/3 text-left py-3 px-4">
@@ -240,10 +360,11 @@
                                         </button>
                                     </form>
                                     {% if edit %}
+                                    <!-- Modal -->
                                     <div class="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-5 gap-5">
                                         <div class="bg-white flex flex-col p-6 rounded-lg shadow-lg w-[400px] items-center justify-center" >
                                             <div class="flex flex-row items-center justify-center mb-10">
-                                                <h2 class="text-2xl font-bold">Usuário</h2>
+                                                <h2 class="text-2xl font-bold">Editar Usuário</h2>
                                             </div>
                                             <form method="POST" action="/ecommerce/home/" class="flex flex-col items-center gap-10">
                                                 {% csrf_token %}
@@ -312,7 +433,7 @@
                             <th class="w-1/5 text-left py-3 px-4">Horario da venda</th>
                             <th class="w-1/5 text-left py-3 px-4">Valor total da venda</th>
                             <th class="w-1/2 text-left py-3 px-4">Items da venda</th>
-                            <th class="w-1/6 text-left py-3 px-4">Editar</th>
+                            <th class="w-1/6 text-left py-3 px-4">Excluir</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -340,9 +461,6 @@
                             </td>
                             <td class="w-1/6 text-left py-3 px-4 p-2">
                                 <div class="flex items-center justify-center gap-8">
-                                    <button>
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
                                     <form action="{% url 'delete' items.sale.id %}" method="POST">
                                         {% csrf_token %}
                                         <button type="submit" name="btn-delete-sale" onclick="return confirm('Tem certeza que deseja deletar esta venda?');">
@@ -359,11 +477,13 @@
 
             {% endif %}
         </div>
-
+        <!-- Modal -->
         <div
             id="modal"
             class="fixed inset-0 bg-opacity-50 bg-black flex items-center justify-center hidden z-50 p-5 gap-5">
             <div id="modal-contents" class="flex justify-between">
+
+                <!-- Modal Content-->
                 <div
                     class="bg-white p-6 rounded-lg shadow-lg modal-content hidden"
                     id="perfil-content">
@@ -387,7 +507,10 @@
                             </div>
                             <div class="flex flex-col col-span-2">
                                 <label for="">Email</label>
-                                {{form.email}}
+                                <input type="email" disabled value="{{user.email}}" class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none hover:cursor-not-allowed">
+                                <div class="hidden">
+                                    {{form.email}}
+                                </div>
                             </div>
                             <div class="flex flex-col col-span-2 hidden">
                                 <label for="">Senha</label>
@@ -395,7 +518,16 @@
                             </div>
                             <div class="flex flex-col">
                                 <label for="">Profile</label>
-                                {{form.role}}
+                                <select
+                                    disabled
+                                    class="p-2 border rounded-lg focus-within:border-[#A7C957] focus:outline-none cursor-not-allowed">
+                                    <option selected value>
+                                        {{user.role}}
+                                    </option>
+                                </select>
+                                <div class="hidden">
+                                    {{form.role}}
+                                </div>
                             </div>
                         </div>
 
@@ -408,6 +540,7 @@
                     </form>
                 </div>
 
+                <!-- Modal Content-->
                 <div
                     class="bg-white p-6 rounded-lg shadow-lg modal-content hidden"
                     id="added-user-content">
@@ -471,6 +604,7 @@
                     </form>
                 </div>
 
+                <!-- Modal Content-->
                 <div
                     class="bg-white p-6 rounded-lg shadow-lg modal-content hidden"
                     id="added-fruits-content">
@@ -550,8 +684,8 @@
                                 {% endfor %}
                             </div>
                             
-                            <button type="button" class="bg-blue-500 text-white p-2 rounded" onclick="addSaleItem()">Add Item</button>
-                            <button name="items-sale" type="submit" class="bg-green-500 text-white p-2 rounded">Submit</button>
+                            <button type="button" class="bg-blue-500 hover:bg-blue-900 text-white p-2 rounded" onclick="addSaleItem()">Add Item</button>
+                            <button name="items-sale" type="submit" class="bg-[#6A994E] hover:bg-[#386641] text-white p-2 rounded">Confirmar</button>
                         </form>
                     
                         <script>
@@ -581,11 +715,12 @@
             
         </div>
 
+        <!-- Modal -->
         {% if messages %}
             {% for message in messages %}
                 {% if message.tags == 'success' %}
                 <div
-                    id="success-modal"
+                    id="modal-message"
                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5">
                         <div
                             class="bg-white p-6 rounded-lg shadow-lg text-[#A7C957] flex flex-row gap-5 items-center justify-center">
@@ -595,7 +730,7 @@
                 </div>
                 {% elif message.tags == 'error' %}
                 <div
-                    id="success-modal"
+                    id="modal-message"
                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5">
                         <div
                             class="bg-white p-6 rounded-lg shadow-lg text-[#BC4749] flex flex-row gap-5 items-center justify-center">
@@ -680,13 +815,13 @@
                 }
             });
 
-            const successModal = document.getElementById('success-modal');
+            const successModal = document.getElementById('modal-message');
 
                 if (successModal) {
-                    // Ocultar o modal de sucesso após 2.5 segundos
+                    // Ocultar o modal de sucesso após 1 segundos
                     setTimeout(() => {
                         successModal.classList.add('hidden');
-                    }, 2500);
+                    }, 1000);
                 }
             
             const modalEditUser = document.getElementById('edit-modal-user')
