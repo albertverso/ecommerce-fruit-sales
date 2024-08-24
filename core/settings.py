@@ -31,7 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'ecommerce-fruit-sales.onrender.com',
     'localhost',  # para desenvolvimento local
-    'http://127.0.0.1:8000/',
+    '127.0.0.1',
 ]
 
 
@@ -144,7 +144,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
