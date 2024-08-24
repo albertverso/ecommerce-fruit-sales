@@ -43,7 +43,7 @@ class FruitForm(forms.ModelForm):
         self.fields['fruit_name'].required = True
         self.fields['rating'].required = True
         self.fields['itemssalevalue_sale'].required = True
-        self.fields['fresh'].required = True
+        self.fields['fresh'].required = False
         self.fields['quantity'].required = True
        
 

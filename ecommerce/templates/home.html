@@ -815,12 +815,13 @@
                 }
             });
 
-            const successModal = document.getElementById('modal-message');
+            const modalMessage = document.getElementById('modal-message');
 
-                if (successModal) {
+                if (modalMessage) {
                     // Ocultar o modal de sucesso após 1 segundos
                     setTimeout(() => {
-                        successModal.classList.add('hidden');
+                        modalMessage.classList.add('hidden');
+                        window.location.href = window.location.origin + window.location.pathname;
                     }, 1000);
                 }
             
