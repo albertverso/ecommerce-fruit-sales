@@ -1,5 +1,6 @@
 import dotenv
 import os
+import dj_database_url
 """
 Django settings for core project.
 
@@ -93,14 +94,9 @@ MESSAGE_TAGS = {
 dotenv.load_dotenv(dotenv.find_dotenv())
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv("DATABASE"),
-        'USER': os.getenv("USER"),
-        'PASSWORD': os.getenv("PASSWORD"),
-        'HOST': os.getenv("HOST"),
-        'PORT':'3306',
-    }
+    'default': dj_database_url.config(
+        default='postgres://'+os.getenv("HOST")+':'+os.getenv("PASSWORD")+'@'+os.getenv("DATABASE")
+    )
 }
 
 

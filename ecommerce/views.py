@@ -70,13 +70,15 @@ def home_page(request, id=None):
         sale_item_formset = SaleItemFormSet()
 
         user = request.user
-        user_list = User.objects.filter(role__in=['cliente', 'vendedor'])
+        user_list = User.objects.filter(role__in=['Cliente', 'Vendedor'])
         sales_list = Sale.objects.filter(user=request.user)
         items_list = SaleItem.objects.filter(sale__user=request.user)
         filter_fruit = request.GET.get('filter-class')
         filter_fruit_fresh = request.GET.get('filter-fresh')
         query = request.GET.get('search')
         fruits_list = Fruit.objects.all()
+
+        print(user_list)
 
         # Filtra a lista de frutas com base nos parâmetros de pesquisa
         if query:
@@ -129,7 +131,7 @@ def home_page(request, id=None):
             if get_query_user:
                 user_instance = get_object_or_404(User, id=get_query_user)
                 form = UserProfileForm(instance=user_instance)
-
+                print(user_list)
                 context = {
                     'edit': get_query_user,
                     'is_admin': True,
