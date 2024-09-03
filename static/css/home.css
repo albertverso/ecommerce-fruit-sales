@@ -6,3 +6,12 @@
     background-position: center; /* Centraliza a imagem */
     background-repeat: no-repeat; /* Não repete a imagem */
 }
+
+.backgroundLogin {
+    background-image: url(/media/pngwing.com16.png);
+   /* width: 50px;
+   /* height: 50px;
+    background-size: cover; /* Preenche a largura e altura da div */
+    background-position: center; /* Centraliza a imagem */
+    background-repeat: no-repeat; /* Não repete a imagem */
+}

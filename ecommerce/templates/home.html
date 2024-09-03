@@ -14,10 +14,10 @@
             type="imagex/png"
             href="/media/fruit_icon.png" />
 
-        <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
         {% load static %}
+        <link rel="stylesheet" href="{% static 'css/home.css' %}" />
     </head>
-    <body class="flex flex-col bg-[#F2E8CF]"  id="main-content">
+    <body class="flex flex-col bg-[#d3e6c2]"  id="main-content">
         <header
             class="flex flex-row items-end justify-start px-[100px] py-5 gap-10 mb-10">
             <div class="flex flex-row items-end gap-2">
@@ -753,14 +753,12 @@
 
             function toggleSidebar() {
                 sidebar.classList.toggle("translate-x-full");
-                menuBtn.classList.toggle("hidden");
                 closeBtn.classList.toggle("hidden");
             }
 
             function closeSidebar() {
                 if (!sidebar.classList.contains("translate-x-full")) {
                     sidebar.classList.add("translate-x-full");
-                    menuBtn.classList.remove("hidden");
                     closeBtn.classList.add("hidden");
                 }
             }
