@@ -134,9 +134,9 @@
         </header>
 
         <div
-            class="flex flex-col items-center justify-center h-full bg-slate-100 px-[100px] bg-fixed bg-repeat bg-[length:500px_400px] pb-10 main-content"
-            style="background-image: url('/media/cover-trans.png')">
-            <section class="flex flex-col items-center justify-center">
+            class="flex flex-col items-center justify-center h-full bg-slate-100 px-[100px] pb-10 main-content relative">
+            <div class="absolute inset-0 bg-fixed bg-repeat bg-[length:500px_400px] opacity-15 z-0" style="background-image: url('/media/cover-trans.png');"></div>
+            <section class="flex flex-col items-center justify-center relative z-10">
                 <div class="flex flex-row items-center">
                     <div
                         class="flex text-4xl font-bold text-white bg-[#386641] mb-4 mt-4 py-2 px-4 rounded-xl items-center justify-center">
@@ -315,7 +315,7 @@
             </section>
 
             {% if is_admin %}
-            <div class="flex flex-col items-center justify-center mt-10 w-full">
+            <div class="flex flex-col items-center justify-center mt-10 w-full relative z-10">
                 <div class="flex text-4xl font-bold text-white py-2 px-4 bg-[#386641] rounded-xl items-center justify-center mb-4">
                     <p class="text-center">Usuários</p>
                 </div>
@@ -421,7 +421,7 @@
             </div>
             {% elif is_vendedor %}
 
-            <div class="flex flex-col items-center justify-center mt-10 w-full">
+            <div class="flex flex-col items-center justify-center mt-10 w-full ">
                 <div
                     class="flex text-4xl font-bold text-white py-2 px-4 bg-[#386641] rounded-xl items-center justify-center mb-4">
                     <p class="text-center">Vendas</p>
