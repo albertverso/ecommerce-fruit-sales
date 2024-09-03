@@ -28,18 +28,16 @@ class UserProfileForm(forms.ModelForm):
 class FruitForm(forms.ModelForm):
     class Meta:
         model = Fruit
-        fields = ['image', 'fruit_name', 'rating', 'quantity', 'itemssalevalue_sale', 'fresh']
+        fields = ['fruit_name', 'rating', 'quantity', 'itemssalevalue_sale', 'fresh']
 
     def __init__(self, *args, **kwargs):
         super(FruitForm, self).__init__(*args, **kwargs)
-        self.fields['image'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
         self.fields['fruit_name'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
         self.fields['rating'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
         self.fields['itemssalevalue_sale'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
         self.fields['quantity'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
         self.fields['fresh'].widget.attrs.update({'class': 'p-10 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
-
-        self.fields['image'].required = True
+        
         self.fields['fruit_name'].required = True
         self.fields['rating'].required = True
         self.fields['itemssalevalue_sale'].required = True

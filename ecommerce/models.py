@@ -32,7 +32,7 @@ class Fruit(models.Model):
     fresh = models.BooleanField(default=False)
     quantity = models.IntegerField()
     itemssalevalue_sale = models.DecimalField(max_digits=10, decimal_places=2)
-    image = models.ImageField(upload_to='', null=True, blank=True)
+    image = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.fruit_name

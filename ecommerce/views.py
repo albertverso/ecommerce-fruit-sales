@@ -8,6 +8,14 @@ from django.contrib import messages
 from django.contrib.messages import get_messages
 import time
 from django.forms import modelformset_factory
+import base64
+from PIL import Image
+from io import BytesIO
+
+
+def convert_image_to_base64(image_file):
+    image_data = image_file.read()  # Lê os dados da imagem
+    return base64.b64encode(image_data).decode('utf-8')  # Converte para base64
 
 def login_user(request):
     """
@@ -217,9 +225,24 @@ def home_page(request, id=None):
             fruit_form = FruitForm(request.POST, request.FILES)
 
             if fruit_form.is_valid():
-                fruit_form.save()
-                messages.success(request, 'Fruta adicionada')
-                return redirect('home')
+                fruit_name = fruit_form.cleaned_data['fruit_name']
+                rating = fruit_form.cleaned_data['rating']
+                quantity = fruit_form.cleaned_data['quantity']
+                itemssalevalue_sale = fruit_form.cleaned_data['itemssalevalue_sale']
+                fresh = fruit_form.cleaned_data['fresh']
+                imagem = request.FILES.get('image')
+                
+                print(request.FILES) 
+                print(imagem)
+                if imagem:
+                    imagem_base64 = convert_image_to_base64(imagem)
+                    fruit = Fruit(fruit_name=fruit_name, rating=rating, fresh=fresh, quantity=quantity, itemssalevalue_sale=itemssalevalue_sale, image=imagem_base64)
+                    fruit.save()
+                    messages.success(request, 'Fruta adicionada')
+                    return redirect('home')
+                
+            print(fruit_form.errors)  # Isso ajudará a identificar o que está errado
+            return HttpResponse("Formulário inválido.")
 
         elif 'items-sale' in request.POST:
             # Processa a adição de uma nova venda
