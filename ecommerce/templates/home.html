@@ -12,7 +12,7 @@
         <link
             rel="shortcut icon"
             type="imagex/png"
-            href="/static/images/fruit_icon.png" />
+            href="/media/fruit_icon.png" />
 
         <link rel="stylesheet" type="text/css" href="/static/css/home.css" />
         {% load static %}
@@ -135,7 +135,7 @@
 
         <div
             class="flex flex-col items-center justify-center h-full bg-slate-100 px-[100px] bg-fixed bg-repeat bg-[length:500px_400px] pb-10 main-content"
-            style="background-image: url('/static/images/cover-trans.png')">
+            style="background-image: url('/media/cover-trans.png')">
             <section class="flex flex-col items-center justify-center">
                 <div class="flex flex-row items-center">
                     <div
@@ -219,7 +219,7 @@
                             </div>
                             {% endif %}
                             <img
-                                src="{{fruit.image.url}}"
+                                src="data:image/png;base64,{{ fruit.image }}"
                                 alt="{{fruit.name}}"
                                 class="rounded-2xl w-[200px] h-[200px]" />
                         </div>
@@ -627,21 +627,21 @@
                                 <label for="">Classificação</label>
                                 {{ fruit_form.rating }}
                             </div>
-                            <div class="flex flex-col items-start justify-start">
-                                <label for="">Fresca</label>
-                                {{ fruit_form.fresh }}
-                            </div>
                             <div class="flex flex-col">
                                 <label for="">Quantidade</label>
                                 {{ fruit_form.quantity }}
                             </div>
                             <div class="flex flex-col">
                                 <label for="">Preço</label>
-                                    {{ fruit_form.itemssalevalue_sale }}
+                                {{ fruit_form.itemssalevalue_sale }}
+                            </div>
+                            <div class="flex flex-col items-start justify-start">
+                                <label for="">Fresca</label>
+                                {{ fruit_form.fresh }}
                             </div>
                             <div class="flex flex-col"> 
-                                <label for="">Imagem</label>
-                                    {{ fruit_form.image }}
+                                <label for="image">Imagem</label>
+                                <input class="flex mb-10" type="file" id="image" name="image"><br><br>
                             </div>
                         </div>
 
