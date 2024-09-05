@@ -50,14 +50,21 @@ class SaleForm(forms.ModelForm):
         model = Sale
         fields = ['date_time', 'total_value']
         widgets = {
-            'date_time': forms.DateTimeInput(attrs={'type': 'datetime-local'})
+            'date_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'quantity': forms.NumberInput(attrs={
+                'inputmode': 'numeric', 
+                'min': '1', 
+                'step': '1',
+                'pattern': '[0-9]*'
+            }),
+            'total_value': forms.NumberInput(attrs={'readonly': 'readonly'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(SaleForm, self).__init__(*args, **kwargs)
         self.fields['date_time'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
         self.fields['total_value'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]', 'type': 'datetime-local',})
-
+        
         self.fields['date_time'].required = True
         self.fields['total_value'].required = True
 

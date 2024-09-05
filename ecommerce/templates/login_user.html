@@ -11,12 +11,12 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}" />
 </head>
-<body class="flex flex-row items-center justify-between bg-[#d3e6c2]">
-    <div class="flex bg-white overflow-hidden max-h-[100vh]">
-       <img class="flex bottom-5" src="/media/pngwing.com.png" alt="">
+<body class="flex h-screen bg-[#d3e6c2]">
+    <div class="w-8/12 h-full bg-white">
+       <img class="w-full h-full object-cover" src="/media/pngwing.com.png" alt="">
     </div>
 
-    <div class="flex flex-col items-center gap-4 px-32 py-10 mr-5">
+    <div class="w-4/12 h-full flex flex-col items-center pt-14">
         <header class="flex flex-col items-center justify-center gap-10">
             <div class="flex flex-col items-center justify-center gap-2">
                 <div class="icon w-32 h-32"></div>
@@ -28,31 +28,31 @@
             </div>
         </header>
 
-        <div class="flex items-center border-2 border-[#BC4749] gap-1 rounded-full ">
+        <div class="flex items-center border-4 border-[#BC4749] rounded-full mt-5 ">
             <!-- Botão On -->
             <button id="toggleOn"
-                class="btn-toggle bg-[#BC4749] text-white px-4 py-2 rounded-full focus:outline-none transition text-lg font-semibold duration-500">Sigh
+                class="btn-toggle bg-[#BC4749] -ml-[1px] text-white px-4 py-2 rounded-3xl focus:outline-none transition text-lg font-semibold duration-500">Sigh
                 in</button>
             <!-- Botão Off -->
             <button id="toggleOff"
-                class="btn-toggle bg-gray-300 text-gray-700 px-4 py-2 rounded-full focus:outline-none transition duration-500 text-lg font-semibold">Sigh
+                class="btn-toggle bg-gray-300 -mr-[1px] text-gray-700 px-4 py-2 rounded-3xl focus:outline-none transition duration-500 text-lg font-semibold">Sigh
                 up</button>
         </div>
         <div id="sigh-in" class="flex">
             <form action="/ecommerce/login_user/" method="POST" class="flex flex-col gap-4 text-black font-semibold">
                 {% csrf_token %}
-                <p class="text-2xl font-bold text-[#A7C957] mb-4 items-center justify-center text-center">ENTRAR</p>
+                <p class="text-2xl font-bold text-[#386641] mb-4 items-center pt-5 justify-center text-center">ENTRAR</p>
                 <div class="flex flex-col gap-2">
-                    <label for=""> digite seu username</label>
-                    <input type="text" name="user_name" placeholder="digite.." required
-                        class="border border-1 rounded-lg p-1 focus:outline-[#A7C957] text-black" />
+                    <label for="">Username</label>
+                    <input type="text" name="user_name" placeholder="digite seu username" required
+                        class="outline-none rounded-lg p-1 focus:outline-[#A7C957] text-black" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label for=""> digite sua senha:</label>
-                    <input type="password" name="password" placeholder="digite.." minlength="5" required
-                        class="border border-1 rounded-lg p-1 focus:outline-[#A7C957] text-black" />
+                    <label for="">Senha</label>
+                    <input type="password" name="password" placeholder="digite sua senha" minlength="5" required
+                        class="outline-none rounded-lg p-1 focus:outline-[#A7C957] text-black" />
                 </div>
-                <button type="submit" name="sigh_in" class="rounded-lg h-10 text-white bg-[#A7C957] hover:bg-[#386641]">
+                <button type="submit" name="sigh_in" class="rounded-lg h-10 text-white bg-[#386641] hover:bg-[#27502f]">
                     Confirmar
                 </button>
             </form>
@@ -61,24 +61,24 @@
         <div id="sigh-up" class="flex hidden">
             <form action="/ecommerce/login_user/" method="POST" class="flex flex-col gap-4 font-semibold text-black">
                 {% csrf_token %}
-                <p class="text-2xl font-bold text-[#A7C957] mb-4 items-center justify-center text-center">INSCREVER-SE
+                <p class="text-2xl font-bold text-[#386641] mb-4 pt-5 items-center justify-center text-center">INSCREVER-SE
                 </p>
                 <div class="flex flex-col gap-2">
-                    <label for=""> digite um username</label>
-                    <input type="text" name="user_name" placeholder="digite.." required
-                        class="border border-1 rounded-lg p-1 focus:outline-[#A7C957] text-black" />
+                    <label for="">Username</label>
+                    <input type="text" name="user_name" placeholder="digite um username" required
+                        class="outline-none rounded-lg p-1 focus:outline-[#A7C957] text-black" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label for=""> digite seu email:</label>
-                    <input type="email" name="email" placeholder="digite.." required
-                        class="border border-1 rounded-lg p-1 focus:outline-[#A7C957] text-black" />
+                    <label for="">Email</label>
+                    <input type="email" name="email" placeholder="digite um email" required
+                        class="outline-none rounded-lg p-1 focus:outline-[#A7C957] text-black" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label for=""> digite uma senha:</label>
-                    <input type="password" name="password" placeholder="digite.." minlength="5" required
-                        class="border border-1 rounded-lg p-1 focus:outline-[#A7C957] text-black" />
+                    <label for="">Senha</label>
+                    <input type="password" name="password" placeholder="digite uma senha" minlength="5" required
+                        class="outline-none rounded-lg p-1 focus:outline-[#A7C957] text-black" />
                 </div>
-                <button type="submit" name="sigh_up" class="rounded-lg h-10 text-white bg-[#A7C957] hover:bg-[#386641]">
+                <button type="submit" name="sigh_up" class="rounded-lg h-10 text-white bg-[#386641] hover:bg-[#27502f]">
                     Confirmar
                 </button>
             </form>

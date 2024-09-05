@@ -7,7 +7,6 @@
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-        <link rel="stylesheet" href="home.css" />
         <title>Home</title>
         <link
             rel="shortcut icon"
@@ -214,8 +213,8 @@
                         <div class="h-[200px] w-[200px] relative rounded-lg">
                             {% if fruit.fresh %}
                             <div
-                                class="flex rounded-full bg-[#A7C957] w-24 h-8 absolute items-center justify-center font-bold">
-                                <p>Fresca</p>
+                                class="flex rounded-full bg-[#6A994E] w-24 h-8 absolute items-center justify-center font-bold">
+                                <p class="text-white">Fresca</p>
                             </div>
                             {% endif %}
                             <img
@@ -231,7 +230,7 @@
                                 R$ {{ fruit.itemssalevalue_sale }} 
                             </p>
                         </div>
-                        <div class="flex items-center mt-5">
+                        <div class="flex items-center justify-between w-full gap-4 mt-5">
                             {% if is_vendedor %}
                             <button
                                 class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
@@ -241,8 +240,14 @@
                             <form method="GET">
                                 {% csrf_token %}
                                 <input hidden type="text" value="{{fruit.id}} " name="get-fruit">
-                                <button id="btn-get-user" type="submit" value="{{ request.GET.query|default:'' }}" class="bg-[#6A994E] hover:bg-[#386641] w-48 h-10 rounded-md text-center font-bold text-white">
+                                <button id="btn-get-user-{{fruit.id}}" type="submit" value="{{ request.GET.query|default:'' }}" class="bg-[#6A994E] px-12 w-full hover:bg-[#386641] h-10 rounded-md text-center font-bold text-white">
                                     Editar
+                                </button>
+                            </form>
+                            <form action="{% url 'delete' fruit.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" name="btn-delete-fruit" onclick="return confirm('Tem certeza que deseja deletar essa Fruta?');">
+                                    <i class="bi bi-trash3"></i>
                                 </button>
                             </form>
                                 {% if edit_fruit %}
@@ -315,7 +320,7 @@
             </section>
 
             {% if is_admin %}
-            <div class="flex flex-col items-center justify-center mt-10 w-full relative z-10">
+            <div class="flex flex-col items-center justify-center mt-10 w-full relative">
                 <div class="flex text-4xl font-bold text-white py-2 px-4 bg-[#386641] rounded-xl items-center justify-center mb-4">
                     <p class="text-center">Usuários</p>
                 </div>
@@ -349,7 +354,7 @@
                                     <form method="GET">
                                         {% csrf_token %}
                                         <input hidden type="text" value="{{user.id}} " name="get-user">
-                                        <button id="btn-get-user" type="submit" value="{{ request.GET.query|default:'' }}">
+                                        <button id="btn-get-user-{{user.id}}" type="submit" value="{{ request.GET.query|default:'' }}">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
                                     </form>
@@ -421,7 +426,7 @@
             </div>
             {% elif is_vendedor %}
 
-            <div class="flex flex-col items-center justify-center mt-10 w-full ">
+            <div class="flex flex-col items-center justify-center mt-10 w-full relative">
                 <div
                     class="flex text-4xl font-bold text-white py-2 px-4 bg-[#386641] rounded-xl items-center justify-center mb-4">
                     <p class="text-center">Vendas</p>
@@ -660,35 +665,79 @@
                     <div class="flex flex-row items-center justify-center mb-10">
                         <h2 class="text-2xl font-bold">Adicionar Vendas</h2>
                     </div>
-                        <form method="post">
+                        <form method="post" class="flex items-center justify-center">
                             {% csrf_token %}
-                            <div class="mb-4 p-4 bg-white shadow rounded">
-                                {{ sale_form.total_value.label_tag }}
-                                {{ sale_form.total_value }}
-                                {{ sale_form.date_time.label_tag }}
-                                {{ sale_form.date_time }}
+                            <div class="grid grid-cols-2 mb-4 p-4 gap-4 bg-white">
+                                <div class="flex flex-col disabled:" >
+                                    <label for="{{sale_form.total_value.id_for_label}}">Valor Total</label>
+                                    {{ sale_form.total_value }}
+                                </div>
+                                <div class="flex flex-col">
+                                    <label for="">Horario da Venda</label>
+                                    {{ sale_form.date_time }}
+                                </div>
                             </div>
                             {{ sale_item_formset.management_form }}
                             <div id="sale-items">
                                 {% for form in sale_item_formset %}
-                                    <div class="mb-4 p-4 bg-white shadow rounded sale-item-form">
-                                        {{ form.fruit.label_tag }}
-                                        {{ form.fruit }}
-                                        {{ form.quantity.label_tag }}
-                                        {{ form.quantity }}
-                                        {{ form.unitary_value.label_tag }}
-                                        {{ form.unitary_value }}
-                                        {{ form.discount.label_tag }}
-                                        {{ form.discount }}
+                                    <div class="grid grid-cols-2 mb-4 p-4 gap-4 bg-white sale-item-form">
+                                        <div class="flex flex-col">
+                                            <label for="form.quantity.id_for_label">Quantidade</label>
+                                            {{ form.quantity }}
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label for="{{ form.unitary_value.id_for_label }}">Preço por Unidade</label>
+                                            {{ form.unitary_value }}
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label for="">Fruta</label>
+                                            {{ form.fruit }}
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label for="">Desconto</label>
+                                            {{ form.discount }}
+                                        </div>
                                     </div>
                                 {% endfor %}
                             </div>
                             
-                            <button type="button" class="bg-blue-500 hover:bg-blue-900 text-white p-2 rounded" onclick="addSaleItem()">Add Item</button>
+                            <!-- <button type="button" class="bg-blue-500 hover:bg-blue-900 text-white p-2 rounded" onclick="addSaleItem()">Add Item</button> -->
                             <button name="items-sale" type="submit" class="bg-[#6A994E] hover:bg-[#386641] text-white p-2 rounded">Confirmar</button>
                         </form>
-                    
+                        
                         <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                // Seleciona todos os campos de quantidade e preço por unidade
+                                const quantityFields = document.querySelectorAll("[name$='-quantity']");
+                                const unitaryValueFields = document.querySelectorAll("[name$='-unitary_value']");
+                                const totalValueField = document.querySelector("[name='total_value']");
+                            
+                                function calculateTotal() {
+                                    let total = 0;
+                            
+                                    quantityFields.forEach((quantityField, index) => {
+                                        const quantity = parseFloat(quantityField.value) || 0;
+                                        const unitaryValue = parseFloat(unitaryValueFields[index].value) || 0;
+                                        total += quantity * unitaryValue;
+                                    });
+                            
+                                    // Atualizar o campo de valor total
+                                    totalValueField.value = total.toFixed(2); // Duas casas decimais
+                                }
+                            
+                                // Adiciona eventos de input para calcular o total sempre que o valor mudar
+                                quantityFields.forEach(field => {
+                                    field.addEventListener("input", calculateTotal);
+                                });
+                            
+                                unitaryValueFields.forEach(field => {
+                                    field.addEventListener("input", calculateTotal);
+                                });
+                            });
+                        </script>
+                            
+                            
+                        <!-- <script>
                             function addSaleItem() {
                                 var formIdx = document.querySelectorAll('.sale-item-form').length;
                                 var newForm = document.createElement('div');
@@ -701,7 +750,7 @@
                                     input.value = '';
                                 });
                             }
-                        </script>
+                        </script> -->
                 </div>
 
                 <div class="-translate-x-8 translate-y-2">
