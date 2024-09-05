@@ -231,17 +231,14 @@ def home_page(request, id=None):
                 itemssalevalue_sale = fruit_form.cleaned_data['itemssalevalue_sale']
                 fresh = fruit_form.cleaned_data['fresh']
                 imagem = request.FILES.get('image')
-                
-                print(request.FILES) 
-                print(imagem)
+              
                 if imagem:
                     imagem_base64 = convert_image_to_base64(imagem)
                     fruit = Fruit(fruit_name=fruit_name, rating=rating, fresh=fresh, quantity=quantity, itemssalevalue_sale=itemssalevalue_sale, image=imagem_base64)
                     fruit.save()
                     messages.success(request, 'Fruta adicionada')
                     return redirect('home')
-                
-            print(fruit_form.errors)  # Isso ajudará a identificar o que está errado
+            
             return HttpResponse("Formulário inválido.")
 
         elif 'items-sale' in request.POST:
@@ -274,6 +271,13 @@ def home_page(request, id=None):
             sale = get_object_or_404(Sale, id=id)
             sale.delete()
             messages.success(request, "Venda deletada com sucesso.")
+            return redirect('home')
+
+        elif 'btn-delete-fruit' in request.POST:
+            # Processa a exclusão de uma venda
+            fruit = get_object_or_404(Fruit, id=id)
+            fruit.delete()
+            messages.success(request, "Fruta deletada com sucesso.")
             return redirect('home')
 
         elif 'btn-confirm-edit' in request.POST:
