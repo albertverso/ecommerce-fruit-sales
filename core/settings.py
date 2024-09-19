@@ -99,11 +99,17 @@ MESSAGE_TAGS = {
 dotenv.load_dotenv(dotenv.find_dotenv())
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgres://'+os.getenv("HOST")+':'+os.getenv("PASSWORD")+'@'+os.getenv("DATABASE")
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': '',  # Pode ser deixado em branco se usar o DATABASE_URL
+        'USER': '',        # Pode ser deixado em branco se usar o DATABASE_URL
+        'PASSWORD': '',      # Pode ser deixado em branco se usar o DATABASE_URL
+        'HOST': '',      # Pode ser deixado em branco se usar o DATABASE_URL
+        'PORT': '',           # Pode ser deixado em branco se usar o DATABASE_URL
+    }
 }
 
+DATABASES['default'] = dj_database_url.config(default=os.environ.get('DATABASEURL'))
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
