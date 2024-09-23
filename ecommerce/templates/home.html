@@ -18,145 +18,141 @@
     </head>
     <body class="flex flex-col bg-[#d3e6c2]"  id="main-content">
         <header
-            class="flex flex-row items-end justify-start px-[100px] py-5 gap-10 mb-10">
+            class="flex lg:flex-row flex-col lg:items-end items-center justify-start px-8 md:px-[40px] lg:px-[80px] py-5 gap-10 mb-2 lg:mb-10">
+
             <div class="flex flex-row items-end gap-2">
                 <div class="icon w-32 h-32"></div>
-                <div class="flex flex-row text-6xl font-bold gap-2">
+                <div class="flex flex-row text-2xl md:text-4xl lg:text-6xl font-bold gap-2">
                     <p class="text-[#BC4749]">Zé</p>
                     <p class="text-[#fbb02d]">das</p>
                     <p class="text-[#386641]">Frutas</p>
                 </div>
             </div>
-            <form
-                action="/ecommerce/home/"        
-                method="GET"
-                class="flex h-[46px] w-full rounded-full border border-white bg-white items-center px-4 focus-within:border-[#A7C957] focus-within:text-[#A7C957] relative overflow-hidden hover:shadow-md">
-                {% csrf_token %}
-                <input
-                    autocomplete="off"
-                    id="search-input"
-                    name="search"
-                    value="{{ request.GET.query|default:'' }}"
-                    placeholder="Pesquisar"
-                    type="text"
-                    class="h-[38px] w-full border-transparent rounded-full bg-white focus:outline-none text-lg text-black absolute" />
-                <button type="submit" class="relative z-10 ml-auto " id="search-btn">
-                    <i class="bi bi-search "></i>
-                </button>
-            </form>
-
-            <script>
-                window.addEventListener('load', function() {
-                    if (performance.navigation.type === 1) { // Check if page is reloaded
-                        window.location.href = window.location.pathname; // Redirect to base URL
-                    }
-                });
-            </script>
-        
-            <div class="ml-auto flex flex-row gap-8">
-                <button class="flex rounded focus:outline-none">
-                    <i
-                        class="bi bi-cart4 text-4xl text-black hover:text-[#A7C957]"></i>
-                </button>
-                <!-- Menu Button -->
-                <button id="menu-btn" class="flex rounded focus:outline-none">
-                    <i
-                        class="bi bi-list text-black text-5xl hover:text-[#A7C957]"></i>
-                </button>
-
-                <div class="flex">
-                    <!-- Sidebar -->
-                    <div
-                        id="sidebar"
-                        class="fixed inset-y-0 right-0 transform translate-x-full transition-transform duration-300 w-64 h-screen bg-[#A7C957] text-white flex flex-col z-40">
-                        <div class="flex flex-row items-center justify-between">
-                            <div class="p-4 text-2xl font-semibold">Menu</div>
-                            <!-- Close Button -->
-                            <button
-                                id="close-btn"
-                                class="flex z-50 rounded focus:outline-none pr-5 ">
-                                <i class="bi bi-x-lg text-white text-xl hover:text-[#BC4749]"></i>
-                            </button>
+            <div class="flex flex-row w-full gap-5">
+                <form
+                    action="/ecommerce/home/"        
+                    method="GET"
+                    class="flex h-[46px] w-full rounded-full border border-white bg-white items-center px-4 focus-within:border-[#A7C957] focus-within:text-[#A7C957] relative overflow-hidden hover:shadow-md">
+                    {% csrf_token %}
+                    <input
+                        autocomplete="off"
+                        id="search-input"
+                        name="search"
+                        value="{{ request.GET.query|default:'' }}"
+                        placeholder="Pesquisar"
+                        type="text"
+                        class="h-[38px] w-full border-transparent rounded-full bg-white focus:outline-none text-lg text-black absolute" />
+                    <button type="submit" class="relative z-10 ml-auto " id="search-btn">
+                        <i class="bi bi-search "></i>
+                    </button>
+                </form>
+    
+                <script>
+                    window.addEventListener('load', function() {
+                        if (performance.navigation.type === 1) { // Check if page is reloaded
+                            window.location.href = window.location.pathname; // Redirect to base URL
+                        }
+                    });
+                </script>
+            
+                <div class="flex flex-row justify-end">
+                    <button class="flex rounded focus:outline-none mr-5">
+                        <i
+                            class="bi bi-cart4 text-4xl text-black hover:text-[#A7C957]"></i>
+                    </button>
+                    <!-- Menu Button -->
+                    <button id="menu-btn" class="flex rounded focus:outline-none">
+                        <i
+                            class="bi bi-list text-black text-5xl hover:text-[#A7C957]"></i>
+                    </button>
+    
+                    <div class="flex">
+                        <!-- Sidebar -->
+                        <div
+                            id="sidebar"
+                            class="fixed inset-y-0 right-0 transform translate-x-full transition-transform duration-300 w-64 h-screen bg-[#A7C957] text-white flex flex-col z-40">
+                            <div class="flex flex-row items-center justify-between">
+                                <div class="p-4 text-2xl font-semibold">Menu</div>
+                                <!-- Close Button -->
+                                <button
+                                    id="close-btn"
+                                    class="flex z-50 rounded focus:outline-none pr-5 ">
+                                    <i class="bi bi-x-lg text-white text-xl hover:text-[#BC4749]"></i>
+                                </button>
+                            </div>
+                            <nav class="flex flex-col flex-1 p-2 font-semibold">
+                                <a
+                                    href="#"
+                                    class="p-2 rounded hover:bg-[#386641] open-modal"
+                                    data-target="home-content"
+                                    >Home</a
+                                >
+                                <a
+                                    href="#"
+                                    class="p-2 rounded hover:bg-[#386641] open-modal"
+                                    data-target="perfil-content"
+                                    >Perfil</a
+                                >
+                                {% if is_admin %}
+                                    <a
+                                        href="#"
+                                        data-target="added-user-content"
+                                        class="p-2 rounded hover:bg-[#386641] open-modal"
+                                        >Adicionar vendedor</a
+                                    >
+                                    <a
+                                        href="#"
+                                        data-target="added-fruits-content"
+                                        class="p-2 rounded hover:bg-[#386641] open-modal"
+                                        >Adicionar Frutas</a
+                                    >
+                                {% elif is_vendedor %}
+                                <a
+                                    href="#"
+                                    data-target="added-sale-content"
+                                    class="p-2 rounded hover:bg-[#386641] open-modal"
+                                    >Adicionar vendas</a
+                                >
+                                {% endif %}
+                            </nav>
+                            <form
+                                method="POST"
+                                action="/ecommerce/home/"
+                                class="flex justify-center">
+                                {% csrf_token %}
+                                <button
+                                    name="logout"
+                                    type="submit"
+                                    class="flex items-center justify-center mt-auto gap-2 pb-10 hover:text-[#386641]">
+                                    <p class="text-xl font-semibold">Sair</p>
+                                    <i class="bi bi-box-arrow-right text-xl"></i>
+                                </button>
+                            </form>
                         </div>
-                        <nav class="flex flex-col flex-1 p-2 font-semibold">
-                            <a
-                                href="#"
-                                class="p-2 rounded hover:bg-[#386641] open-modal"
-                                data-target="home-content"
-                                >Home</a
-                            >
-                            <a
-                                href="#"
-                                class="p-2 rounded hover:bg-[#386641] open-modal"
-                                data-target="perfil-content"
-                                >Perfil</a
-                            >
-                            {% if is_admin %}
-                                <a
-                                    href="#"
-                                    data-target="added-user-content"
-                                    class="p-2 rounded hover:bg-[#386641] open-modal"
-                                    >Adicionar vendedor</a
-                                >
-                                <a
-                                    href="#"
-                                    data-target="added-fruits-content"
-                                    class="p-2 rounded hover:bg-[#386641] open-modal"
-                                    >Adicionar Frutas</a
-                                >
-                            {% elif is_vendedor %}
-                            <a
-                                href="#"
-                                data-target="added-sale-content"
-                                class="p-2 rounded hover:bg-[#386641] open-modal"
-                                >Adicionar vendas</a
-                            >
-                            {% endif %}
-                        </nav>
-                        <form
-                            method="POST"
-                            action="/ecommerce/home/"
-                            class="flex justify-center">
-                            {% csrf_token %}
-                            <button
-                                name="logout"
-                                type="submit"
-                                class="flex items-center justify-center mt-auto gap-2 pb-10 hover:text-[#386641]">
-                                <p class="text-xl font-semibold">Sair</p>
-                                <i class="bi bi-box-arrow-right text-xl"></i>
-                            </button>
-                        </form>
+                        <div id="modal-container"></div>
                     </div>
-                    <div id="modal-container"></div>
                 </div>
             </div>
         </header>
 
         <div
-            class="flex flex-col items-center justify-center h-full bg-slate-100 px-[100px] pb-10 main-content relative">
+            class="flex flex-col items-center justify-center h-full bg-slate-100  pb-10 main-content relative">
             <div class="absolute inset-0 bg-fixed bg-repeat bg-[length:500px_400px] opacity-15 z-0" style="background-image: url('/media/cover-trans.png');"></div>
-            <section class="flex flex-col items-center justify-center relative z-10">
-                <div class="flex flex-row items-center">
-                    <div
-                        class="flex text-4xl font-bold text-white bg-[#386641] mb-4 mt-4 py-2 px-4 rounded-xl items-center justify-center">
+            <section class="flex flex-col items-center justify-center z-10 gap-5 lg:px-[100px]">
+                <div class="flex lg:flex-row flex-col w-full items-center justify-end relative">
+                    <div class="flex text-4xl font-bold text-white bg-[#386641] mb-4 mt-4 py-2 px-4 rounded-xl items-center justify-center mx-auto">
                         <p class="text-center">
                             Frutas Disponíveis
                         </p>
                     </div>
-                    <div class="flex absolute ml-[560px] gap-3">
-                            <button id="btn-filter" type="submit" class="flex flex-row gap-2 bg text-xl font-bold text-white bg-[#386641] rounded-lg p-2">
-                                Filtrar
-                                <i class="bi bi-funnel"></i>
-                            </button>
-                            <button onclick="reloadAndResett()"
-                            class="bg-[#386641] rounded-lg text-white px-2">
+                    <div class="flex lg:absolute gap-3">
+                        <button id="btn-filter" type="submit" class="flex flex-row gap-2 bg text-xl font-bold text-white bg-[#386641] rounded-lg p-2">
+                            Filtrar
+                            <i class="bi bi-funnel"></i>
+                        </button>
+                        <button onclick="reloadAndResett()" class="bg-[#386641] rounded-lg text-white px-2">
                             <i class="bi bi-eraser text-2xl"></i>
-                            </button>
-                            <script>
-                                function reloadAndResett() {
-                                    window.location.href = window.location.origin + window.location.pathname;
-                                }
-                            </script>
+                        </button>
                     </div>
                     <!-- Modal -->
                     <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5 hidden">
@@ -206,7 +202,7 @@
                         });
                     </script>
                 </div>
-                <div class="grid grid-cols-4 gap-10">
+                <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10">
                     {% for fruit in fruits %}
                     <div
                         class="flex flex-col w-full rounded-xl p-5 bg-white items-center justify-center hover:shadow-2xl">
@@ -320,164 +316,168 @@
             </section>
 
             {% if is_admin %}
-            <div class="flex flex-col items-center justify-center mt-10 w-full relative">
+            <div class="flex flex-col items-center justify-center mt-10 w-full relative px-4 md:px-[40px] lg:px-[80px]">
                 <div class="flex text-4xl font-bold text-white py-2 px-4 bg-[#386641] rounded-xl items-center justify-center mb-4">
                     <p class="text-center">Usuários</p>
                 </div>
-                <table class="min-w-full bg-white border border-[#6A994E]">
-                    <thead class="bg-[#6A994E] text-white">
-                        <tr>
-                            <th class="w-1/4 text-left py-3 px-4">Nome</th>
-                            <th class="w-1/4 text-left py-3 px-4">Username</th>
-                            <th class="w-1/3 text-left py-3 px-4">Email</th>
-                            <th class="w-1/4 text-left py-3 px-4">Profile</th>
-                            <th class="w-1/3 text-left py-3 px-4">Editar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in list_user %}
-                        <tr class="text-lg font-semibold">
-                            <td class="w-1/4 text-left py-3 px-4">
-                                {{ user.first_name }} {{user.last_name}}
-                            </td>
-                            <td class="w-1/4 text-left py-3 px-4">
-                                {{ user.username }}
-                            </td>
-                            <td class="w-1/3 text-left py-3 px-4">
-                                {{ user.email }}
-                            </td>
-                            <td class="w-1/4 text-left py-3 px-4">
-                                {{ user.role }}
-                            </td>
-                            <td class="w-1/3 text-left py-3 px-4">
-                                <div class="flex items-center justify-center gap-8">
-                                    <form method="GET">
-                                        {% csrf_token %}
-                                        <input hidden type="text" value="{{user.id}} " name="get-user">
-                                        <button id="btn-get-user-{{user.id}}" type="submit" value="{{ request.GET.query|default:'' }}">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{% url 'delete' user.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <button type="submit" name="btn-delete-user" onclick="return confirm('Tem certeza que deseja deletar este usuário?');">
-                                            <i class="bi bi-trash3"></i>
-                                        </button>
-                                    </form>
-                                    {% if edit %}
-                                    <!-- Modal -->
-                                    <div class="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-5 gap-5">
-                                        <div class="bg-white flex flex-col p-6 rounded-lg shadow-lg w-[400px] items-center justify-center" >
-                                            <div class="flex flex-row items-center justify-center mb-10">
-                                                <h2 class="text-2xl font-bold">Editar Usuário</h2>
-                                            </div>
-                                            <form method="POST" action="/ecommerce/home/" class="flex flex-col items-center gap-10">
-                                                {% csrf_token %}
-                                                <div class="grid grid-cols-2 gap-4">
-                                                    <div class="flex flex-col">
-                                                        <label for="">Nome</label>
-                                                        {{ form.first_name }}
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <label for="">Sobrenome</label>
-                                                        {{ form.last_name }}
-                                                    </div>
-                                                    <div class="flex flex-col col-span-2">
-                                                        <label for="">Email</label>
-                                                        {{form.email }}
-                                                    </div>
-                                                    <div class="flex flex-col col-span-2 hidden">
-                                                        <label for="">Senha</label>
-                                                        {{form.password}}
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <label for="">Profile</label>
-                                                        {{form.role}}  
-                                                    </div>
-                                                </div>
-                                                
-                                                <input hidden type="text" value="{{ form.id }} " name="post-user">
-                                                <button type="submit" name="btn-confirm-edit"
-                                                    class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
-                                                    Confirmar
-                                                </button>
-                                            </form>
-                                            <button     
-                                                    onclick="reloadAndReset()"
-                                                    type="submit"
-                                                    class="p-2 font-semibold rounded-lg text-white bg-[#BC4749] hover:bg-[#702829] mt-5 w-24">
-                                                    Fechar
+                <div class="flex w-full overflow-x-scroll scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+                    <table class="min-w-full bg-white border border-[#6A994E]">
+                        <thead class="bg-[#6A994E] text-white">
+                            <tr>
+                                <th class="w-1/4 text-left py-3 px-4">Nome</th>
+                                <th class="w-1/4 text-left py-3 px-4">Username</th>
+                                <th class="w-1/3 text-left py-3 px-4">Email</th>
+                                <th class="w-1/4 text-left py-3 px-4">Profile</th>
+                                <th class="w-1/3 text-left py-3 px-4">Editar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in list_user %}
+                            <tr class="text-lg font-semibold">
+                                <td class="w-1/4 text-left py-3 px-4">
+                                    {{ user.first_name }} {{user.last_name}}
+                                </td>
+                                <td class="w-1/4 text-left py-3 px-4">
+                                    {{ user.username }}
+                                </td>
+                                <td class="w-1/3 text-left py-3 px-4">
+                                    {{ user.email }}
+                                </td>
+                                <td class="w-1/4 text-left py-3 px-4">
+                                    {{ user.role }}
+                                </td>
+                                <td class="w-1/3 text-left py-3 px-4">
+                                    <div class="flex items-center justify-center gap-8">
+                                        <form method="GET">
+                                            {% csrf_token %}
+                                            <input hidden type="text" value="{{user.id}} " name="get-user">
+                                            <button id="btn-get-user-{{user.id}}" type="submit" value="{{ request.GET.query|default:'' }}">
+                                                <i class="bi bi-pencil-square"></i>
                                             </button>
+                                        </form>
+                                        <form action="{% url 'delete' user.id %}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" name="btn-delete-user" onclick="return confirm('Tem certeza que deseja deletar este usuário?');">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                        {% if edit %}
+                                        <!-- Modal -->
+                                        <div class="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50 p-5 gap-5">
+                                            <div class="bg-white flex flex-col p-6 rounded-lg shadow-lg w-[400px] items-center justify-center" >
+                                                <div class="flex flex-row items-center justify-center mb-10">
+                                                    <h2 class="text-2xl font-bold">Editar Usuário</h2>
+                                                </div>
+                                                <form method="POST" action="/ecommerce/home/" class="flex flex-col items-center gap-10">
+                                                    {% csrf_token %}
+                                                    <div class="grid grid-cols-2 gap-4">
+                                                        <div class="flex flex-col">
+                                                            <label for="">Nome</label>
+                                                            {{ form.first_name }}
+                                                        </div>
+                                                        <div class="flex flex-col">
+                                                            <label for="">Sobrenome</label>
+                                                            {{ form.last_name }}
+                                                        </div>
+                                                        <div class="flex flex-col col-span-2">
+                                                            <label for="">Email</label>
+                                                            {{form.email }}
+                                                        </div>
+                                                        <div class="flex flex-col col-span-2 hidden">
+                                                            <label for="">Senha</label>
+                                                            {{form.password}}
+                                                        </div>
+                                                        <div class="flex flex-col">
+                                                            <label for="">Profile</label>
+                                                            {{form.role}}  
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <input hidden type="text" value="{{ form.id }} " name="post-user">
+                                                    <button type="submit" name="btn-confirm-edit"
+                                                        class="p-2 font-semibold rounded-lg text-white bg-[#A7C957] hover:bg-[#386641]">
+                                                        Confirmar
+                                                    </button>
+                                                </form>
+                                                <button     
+                                                        onclick="reloadAndReset()"
+                                                        type="submit"
+                                                        class="p-2 font-semibold rounded-lg text-white bg-[#BC4749] hover:bg-[#702829] mt-5 w-24">
+                                                        Fechar
+                                                </button>
+                                            </div>
                                         </div>
+                                        <script>
+                                            function reloadAndReset() {
+                                                window.location.href = window.location.origin + window.location.pathname;
+                                            }
+                                            </script>
+                                        {% endif %}
                                     </div>
-                                    <script>
-                                        function reloadAndReset() {
-                                            window.location.href = window.location.origin + window.location.pathname;
-                                        }
-                                        </script>
-                                    {% endif %}
-                                </div>
-                            </td>
-                        </tr>
-                     
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                         
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
             {% elif is_vendedor %}
 
-            <div class="flex flex-col items-center justify-center mt-10 w-full relative">
+            <div class="flex flex-col items-center justify-center mt-10 w-full relative px-4 md:px-[40px] lg:px-[80px]">
                 <div
                     class="flex text-4xl font-bold text-white py-2 px-4 bg-[#386641] rounded-xl items-center justify-center mb-4">
                     <p class="text-center">Vendas</p>
                 </div>
 
-                <table class="min-w-full bg-white border border-[#6A994E]">
-                    <thead class="bg-[#6A994E] text-white">
-                        <tr>
-                            <th class="w-1/5 text-left py-3 px-4">Horario da venda</th>
-                            <th class="w-1/5 text-left py-3 px-4">Valor total da venda</th>
-                            <th class="w-1/2 text-left py-3 px-4">Items da venda</th>
-                            <th class="w-1/6 text-left py-3 px-4">Excluir</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for items in items_list %}
-                        <tr class="text-lg break-normal">
-                            <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E] font-semibold">
-                                {{ items.sale.date_time }}
-                            </td>
-                            <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E] font-semibold">
-                                {{ items.sale.total_value }}
-                            </td>
-                            <td class="w-full text-left py-3 px-4 flex flex-row justify-between gap-5 border-r-[1px] border-r-[#6A994E]"> 
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <p class="font-bold"> Fruta  </p> <p>{{ items.fruit.fruit_name }}</p>
-                                </div>
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <p class="font-bold"> Quant.  </p> <p> {{ items.quantity }} </p>
-                                </div>
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <p class="font-bold"> Valor Uni. </p> <p> {{ items.unitary_value }} </p> 
-                                </div>
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <p class="font-bold"> Desconto </p>  <p> {{ items.discount }} </p> 
-                                </div>
-                            </td>
-                            <td class="w-1/6 text-left py-3 px-4 p-2">
-                                <div class="flex items-center justify-center gap-8">
-                                    <form action="{% url 'delete' items.sale.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <button type="submit" name="btn-delete-sale" onclick="return confirm('Tem certeza que deseja deletar esta venda?');">
-                                            <i class="bi bi-trash3"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="overflow-x-scroll scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+                    <table class="min-w-full bg-white border border-[#6A994E]">
+                        <thead class="bg-[#6A994E] text-white">
+                            <tr>
+                                <th class="w-1/5 text-left py-3 px-4">Horario da venda</th>
+                                <th class="w-1/5 text-left py-3 px-4">Valor total da venda</th>
+                                <th class="w-1/2 text-left py-3 px-4">Items da venda</th>
+                                <th class="w-1/6 text-left py-3 px-4">Excluir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for items in items_list %}
+                            <tr class="text-lg break-normal">
+                                <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E] font-semibold">
+                                    {{ items.sale.date_time }}
+                                </td>
+                                <td class="w-1/5 text-left py-3 px-4 border-r-[1px] border-r-[#6A994E] font-semibold">
+                                    {{ items.sale.total_value }}
+                                </td>
+                                <td class="w-full text-left py-3 px-4 flex flex-row justify-between gap-5 border-r-[1px] border-r-[#6A994E]"> 
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <p class="font-bold"> Fruta  </p> <p>{{ items.fruit.fruit_name }}</p>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <p class="font-bold"> Quant.  </p> <p> {{ items.quantity }} </p>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <p class="font-bold"> Valor Uni. </p> <p> {{ items.unitary_value }} </p> 
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <p class="font-bold"> Desconto </p>  <p> {{ items.discount }} </p> 
+                                    </div>
+                                </td>
+                                <td class="w-1/6 text-left py-3 px-4 p-2">
+                                    <div class="flex items-center justify-center gap-8">
+                                        <form action="{% url 'delete' items.sale.id %}" method="POST">
+                                            {% csrf_token %}
+                                            <button type="submit" name="btn-delete-sale" onclick="return confirm('Tem certeza que deseja deletar esta venda?');">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {% endif %}
