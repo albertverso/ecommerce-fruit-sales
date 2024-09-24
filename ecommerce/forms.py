@@ -19,8 +19,8 @@ class UserProfileForm(forms.ModelForm):
         self.fields['password'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
         self.fields['role'].widget.attrs.update({'class': 'p-2 border  rounded-lg focus:outline-none focus-within:border-[#A7C957]'})
 
-        self.fields['first_name'].required = True
-        self.fields['last_name'].required = True
+        self.fields['first_name'].required = False
+        self.fields['last_name'].required = False
         self.fields['email'].required = True
         self.fields['password'].required = True
         self.fields['role'].required = True
@@ -28,7 +28,7 @@ class UserProfileForm(forms.ModelForm):
 class FruitForm(forms.ModelForm):
     class Meta:
         model = Fruit
-        fields = ['fruit_name', 'rating', 'quantity', 'itemssalevalue_sale', 'fresh']
+        fields = ['fruit_name', 'rating', 'quantity', 'itemssalevalue_sale', 'fresh', 'image']
 
     def __init__(self, *args, **kwargs):
         super(FruitForm, self).__init__(*args, **kwargs)
@@ -43,6 +43,7 @@ class FruitForm(forms.ModelForm):
         self.fields['itemssalevalue_sale'].required = True
         self.fields['fresh'].required = False
         self.fields['quantity'].required = True
+        self.fields['image'].required = False
        
 
 class SaleForm(forms.ModelForm):

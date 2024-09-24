@@ -6,16 +6,11 @@ from django.contrib.auth.decorators import login_required
 from ecommerce.forms import UserProfileForm, FruitForm, SaleForm, SaleItemFormSet
 from django.contrib import messages
 from django.contrib.messages import get_messages
-import time
-from django.forms import modelformset_factory
-import base64
 from PIL import Image
-from io import BytesIO
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
-
-def convert_image_to_base64(image_file):
-    image_data = image_file.read()  # Lê os dados da imagem
-    return base64.b64encode(image_data).decode('utf-8')  # Converte para base64
 
 def login_user(request):
     """
@@ -231,15 +226,24 @@ def home_page(request, id=None):
                 itemssalevalue_sale = fruit_form.cleaned_data['itemssalevalue_sale']
                 fresh = fruit_form.cleaned_data['fresh']
                 imagem = request.FILES.get('image')
-              
+
                 if imagem:
-                    imagem_base64 = convert_image_to_base64(imagem)
-                    fruit = Fruit(fruit_name=fruit_name, rating=rating, fresh=fresh, quantity=quantity, itemssalevalue_sale=itemssalevalue_sale, image=imagem_base64)
+                    # Faz o upload da imagem para o Cloudinary
+                    upload_result = cloudinary.uploader.upload(imagem, folder="Fruits")
+                    image_url = upload_result.get('url')  # Pega a URL da imagem no Cloudinary
+
+                    fruit = Fruit(fruit_name=fruit_name, rating=rating, fresh=fresh, quantity=quantity, itemssalevalue_sale=itemssalevalue_sale, image=image_url)
                     fruit.save()
                     messages.success(request, 'Fruta adicionada')
                     return redirect('home')
-            
-            return HttpResponse("Formulário inválido.")
+                else:
+                    fruit = Fruit(fruit_name=fruit_name, rating=rating, fresh=fresh, quantity=quantity, itemssalevalue_sale=itemssalevalue_sale, image='')
+                    fruit.save()
+                    messages.success(request, 'Fruta adicionada')
+                    return redirect('home')
+
+            messages.error(request, 'Error')
+            return redirect('home')
 
         elif 'items-sale' in request.POST:
             # Processa a adição de uma nova venda
@@ -294,17 +298,33 @@ def home_page(request, id=None):
                 return redirect('home')
 
         elif 'btn-confirm-edit-fruit' in request.POST:
-            # Confirma a edição de uma fruta
+            # Busca a fruta existente pelo ID (supondo que você tenha o ID da fruta no POST)
             fruit_instance = get_object_or_404(Fruit, id=get_query_fruit)
             form_fruit = FruitForm(request.POST, instance=fruit_instance)
 
             if form_fruit.is_valid():
-                form_fruit.save()
-                messages.success(request, "Fruta editada com sucesso.")
+                # Atualiza os campos da fruta com os dados do formulário
+                fruit = form_fruit.save(commit=False)  # Obtém a instância da fruta sem salvar ainda
+
+                # Verifica se o usuário enviou uma nova imagem
+                imagem = request.FILES.get('edit_image')
+
+                if imagem:
+                    # Faz o upload da nova imagem para o Cloudinary
+                    upload_result = cloudinary.uploader.upload(imagem, folder="Fruits")
+                    image_url = upload_result.get('url')  # Pega a URL da imagem no Cloudinary
+                    fruit.image = image_url  # Atualiza a imagem
+
+                # Salva as alterações da fruta existente
+                fruit.save()
+
+                messages.success(request, 'Fruta editada com sucesso')
                 return redirect('home')
-            else:
-                messages.error(request, "Error")
-                return redirect('home')
+
+            # Se o formulário não for válido
+            messages.error(request, 'Erro ao editar a fruta.')
+            return redirect('home')
+
 
         else:
             messages.error(request, 'Error')

@@ -1,6 +1,10 @@
 import dotenv
 import os
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 """
 Django settings for core project.
 
@@ -45,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ecommerce',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -110,6 +116,16 @@ DATABASES = {
 }
 
 DATABASES['default'] = dj_database_url.config(default=os.environ.get('DATABASEURL'))
+
+# Configurações de mídia e Cloudinary
+cloudinary.config(
+    cloud_name = os.getenv("CLOUDINARY_NAME"), 
+    api_key = os.getenv("CLOUDINARY_API_KEY"), 
+    api_secret = os.getenv("CLOUDINARY_SECRET_KEY"), 
+    secure=True
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
