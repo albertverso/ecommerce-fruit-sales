@@ -150,9 +150,14 @@
                             Filtrar
                             <i class="bi bi-funnel"></i>
                         </button>
-                        <button onclick="reloadAndResett()" class="bg-[#386641] rounded-lg text-white px-2">
+                        <button onclick="reloadAndReset()" class="bg-[#386641] rounded-lg text-white px-2">
                             <i class="bi bi-eraser text-2xl"></i>
                         </button>
+                        <script>
+                            function reloadAndReset() {
+                                window.location.href = window.location.origin + window.location.pathname;
+                            }
+                        </script>
                     </div>
                     <!-- Modal -->
                     <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-5 gap-5 hidden">
